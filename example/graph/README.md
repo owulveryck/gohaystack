@@ -4,7 +4,7 @@ It relies on the `gonum/graph` package.
 
 Example using the public file [carytown](https://github.com/BrickSchema/brick-examples/blob/master/haystack/carytown.json):
 
-```
+```shell
 curl -s https://raw.githubusercontent.com/BrickSchema/brick-examples/master/haystack/carytown.json | go run main.go| dot -T svg > carytown.svg
 ```
 

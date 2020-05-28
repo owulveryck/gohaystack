@@ -1,3 +1,5 @@
+[![GoDoc](https://godoc.org/github.com/owulveryck/gohaystack?status.svg)](https://pkg.go.dev/github.com/owulveryck/gohaystack?tab=doc) [![Go Report Card](https://goreportcard.com/badge/github.com/owulveryck/gohaystack)](https://goreportcard.com/report/github.com/owulveryck/gohaystack)
+
 # gohaystack
 
 This is a toy library to play with [Project Haystack](https://project-haystack.org/) in Go. It only relies on Go's standard library.
