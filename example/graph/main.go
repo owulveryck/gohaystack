@@ -10,12 +10,14 @@ import (
 	"encoding/json"
 
 	"github.com/owulveryck/gohaystack"
+	"gonum.org/v1/gonum/graph"
 	"gonum.org/v1/gonum/graph/encoding"
 	"gonum.org/v1/gonum/graph/encoding/dot"
 	"gonum.org/v1/gonum/graph/simple"
 )
 
 var maxnodes = flag.Int("maxnodes", 0, "maximum nodes to add to the graph (0 for all)")
+var ports = flag.Bool("ports", false, "generate Graphviz with ports links")
 
 func main() {
 	flag.Parse()
@@ -109,7 +111,11 @@ func (gh *graphHandler) addEdges() error {
 			}
 			to := gh.dict[row[i].Hash()]
 			if to != nil && from.ID() != to.ID() {
-				gh.graph.SetEdge(gh.graph.NewEdge(from, to))
+				if *ports {
+					gh.graph.SetEdge(newEdge(from, to, gh.grid.Cols[i], "id"))
+				} else {
+					gh.graph.SetEdge(newEdge(from, to, "", ""))
+				}
 			}
 		}
 	}
@@ -156,7 +162,7 @@ func (n *node) generateLabel() string {
 			}
 			switch v.Type {
 			case gohaystack.HaystackTypeRef:
-				tmp = tmp + fmt.Sprintf("{<%v>%v|@%v}", v.Value, cols[i], v.Value)
+				tmp = tmp + fmt.Sprintf("{<%v>%v|@%v}", cols[i], cols[i], v.Value)
 			case gohaystack.HaystackTypeMarker:
 				tmp = tmp + fmt.Sprintf("{%v}", cols[i])
 			default:
@@ -166,4 +172,34 @@ func (n *node) generateLabel() string {
 	}
 	output = output + tmp + "}"
 	return output
+}
+
+type edgeWithPorts struct {
+	simple.Edge
+	fromPort, toPort string
+}
+
+func (e edgeWithPorts) ReversedEdge() graph.Edge {
+	e.F, e.T = e.T, e.F
+	e.fromPort, e.toPort = e.toPort, e.fromPort
+	return e
+}
+
+func (e edgeWithPorts) FromPort() (string, string) {
+	return e.fromPort, ""
+}
+
+func (e edgeWithPorts) ToPort() (string, string) {
+	return e.toPort, ""
+}
+
+func newEdge(from, to graph.Node, fromPort, toPort string) edgeWithPorts {
+	return edgeWithPorts{
+		Edge: simple.Edge{
+			F: from,
+			T: to,
+		},
+		fromPort: fromPort,
+		toPort:   toPort,
+	}
 }
