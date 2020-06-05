@@ -94,3 +94,67 @@ func TestGrid_CloneStruct(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestGrid_GetCol(t *testing.T) {
+	type fields struct {
+		Meta         map[string]string
+		db           map[string][]*TypedValue
+		colsDis      map[string]string
+		Cols         map[int]string
+		lastCol      int
+		numberOfRows int
+	}
+	type args struct {
+		col string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   []*TypedValue
+		want1  bool
+	}{
+		{
+			"ok",
+			fields{
+				db: map[string][]*TypedValue{"col1": []*TypedValue{nil}},
+			},
+			args{
+				"col1",
+			},
+			[]*TypedValue{nil},
+			true,
+		},
+		{
+			"ko",
+			fields{
+				db: map[string][]*TypedValue{"col1": []*TypedValue{nil}},
+			},
+			args{
+				"col2",
+			},
+			nil,
+			false,
+		},
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			g := &Grid{
+				Meta:         tt.fields.Meta,
+				db:           tt.fields.db,
+				colsDis:      tt.fields.colsDis,
+				Cols:         tt.fields.Cols,
+				lastCol:      tt.fields.lastCol,
+				numberOfRows: tt.fields.numberOfRows,
+			}
+			got, got1 := g.GetCol(tt.args.col)
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Grid.GetCol() got = %v, want %v", got, tt.want)
+			}
+			if got1 != tt.want1 {
+				t.Errorf("Grid.GetCol() got1 = %v, want %v", got1, tt.want1)
+			}
+		})
+	}
+}
