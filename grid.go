@@ -151,7 +151,11 @@ func (g *Grid) UnmarshalJSON(b []byte) error {
 	for i := range temp.Rows {
 		r := g.NewRow()
 		for k, v := range temp.Rows[i] {
-			g.Set(r, k, NewTypedValue(inferType(v)))
+			typ, val, err := inferType(v)
+			if err != nil {
+				return err
+			}
+			g.Set(r, k, NewTypedValue(typ, val))
 		}
 	}
 	return nil
