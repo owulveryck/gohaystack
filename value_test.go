@@ -28,6 +28,24 @@ func Test_inferType(t *testing.T) {
 		wantErr bool
 	}{
 		{
+			"Invalid 1",
+			args{
+				value: 3.4,
+			},
+			HaystackTypeUndefined,
+			nil,
+			true,
+		},
+		{
+			"Invalid 2",
+			args{
+				value: "é:bla",
+			},
+			HaystackTypeUndefined,
+			`é:bla`,
+			false,
+		},
+		{
 			"Time",
 			args{
 				value: "h:" + refTime.Format("15:04:00"),
@@ -199,5 +217,83 @@ func Test_inferType(t *testing.T) {
 				t.Fail()
 			}
 		})
+	}
+}
+
+func TestTypedValue_Equal(t *testing.T) {
+	type fields struct {
+		Type  HaystackType
+		Value interface{}
+	}
+	type args struct {
+		tv2 *TypedValue
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   bool
+	}{
+		{
+			"different types",
+			fields{
+				HaystackLastType,
+				"b",
+			},
+			args{
+				&TypedValue{
+					Type:  HaystackTypeStr,
+					Value: "b",
+				},
+			},
+			false,
+		},
+		{
+			"Nil value",
+			fields{
+				Value: nil,
+				Type:  HaystackTypeUndefined,
+			},
+			args{
+				&TypedValue{
+					Type:  HaystackTypeStr,
+					Value: "b",
+				},
+			},
+			false,
+		},
+		{
+			"Nil value equal",
+			fields{
+				Value: nil,
+				Type:  HaystackTypeUndefined,
+			},
+			args{
+				&TypedValue{
+					Type:  HaystackTypeStr,
+					Value: nil,
+				},
+			},
+			true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tv := &TypedValue{
+				Type:  tt.fields.Type,
+				Value: tt.fields.Value,
+			}
+			if got := tv.Equal(tt.args.tv2); got != tt.want {
+				t.Errorf("TypedValue.Equal() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+
+}
+
+func TestNewTypedValue_wrong(t *testing.T) {
+	tv := NewTypedValue(HaystackLastType+1, true)
+	if tv.Type != HaystackTypeUndefined {
+		t.Fail()
 	}
 }
