@@ -1,5 +1,6 @@
 [![GoDoc](https://godoc.org/github.com/owulveryck/gohaystack?status.svg)](https://pkg.go.dev/github.com/owulveryck/gohaystack?tab=doc) [![Go Report Card](https://goreportcard.com/badge/github.com/owulveryck/gohaystack)](https://goreportcard.com/report/github.com/owulveryck/gohaystack)
 ![](https://github.com/owulveryck/gohaystack/workflows/Go/badge.svg)
+[![Coverage Status](https://coveralls.io/repos/github/owulveryck/gohaystack/badge.svg?branch=master)](https://coveralls.io/github/owulveryck/gohaystack?branch=master)
 
 # gohaystack
 
