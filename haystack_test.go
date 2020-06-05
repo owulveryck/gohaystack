@@ -2,7 +2,9 @@ package gohaystack
 
 import (
 	"encoding/json"
+	"net/url"
 	"testing"
+	"time"
 )
 
 func Test_grid_MarshalJSON(t *testing.T) {
@@ -76,4 +78,98 @@ func Test_haystackRow_MarshalJSON(t *testing.T) {
 		t.Fatal(err)
 	}
 	t.Log(string(b))
+}
+
+func TestTypedValue_stringJSON(t *testing.T) {
+	uri, _ := url.Parse("https://bladibla")
+	type fields struct {
+		Type  HaystackType
+		Value interface{}
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   string
+	}{
+		{
+			"Marker",
+			fields{
+				HaystackTypeMarker,
+				true,
+			},
+			`"m:"`,
+		},
+		{
+			"DateTime",
+			fields{
+				HaystackTypeDateTime,
+				time.Date(2009, time.November, 10, 23, 0, 0, 0, time.UTC),
+			},
+			`"t:2009-11-10T23:00:00Z"`,
+		},
+		{
+			"Time",
+			fields{
+				HaystackTypeTime,
+				time.Date(2009, time.November, 10, 23, 0, 0, 0, time.UTC),
+			},
+			`"h:23:00:00"`,
+		},
+		{
+			"Date",
+			fields{
+				HaystackTypeDate,
+				time.Date(2009, time.November, 10, 23, 0, 0, 0, time.UTC),
+			},
+			`"d:2009-11-10"`,
+		},
+		{
+			"URI",
+			fields{
+				HaystackTypeURI,
+				uri,
+			},
+			`"u:https://bladibla"`,
+		},
+		{
+			"Number",
+			fields{
+				HaystackTypeNumber,
+				&HaystackNumber{
+					Value: 22.5,
+					Unit:  "FF",
+				},
+			},
+			`"n:22.5 FF"`,
+		},
+		{
+			"Number Without unit",
+			fields{
+				HaystackTypeNumber,
+				&HaystackNumber{
+					Value: 22.5,
+				},
+			},
+			`"n:22.5"`,
+		},
+		{
+			"Reference",
+			fields{
+				HaystackTypeRef,
+				"blabla",
+			},
+			`"r:blabla"`,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			v := &TypedValue{
+				Type:  tt.fields.Type,
+				Value: tt.fields.Value,
+			}
+			if got := v.stringJSON(); got != tt.want {
+				t.Errorf("TypedValue.stringJSON() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }

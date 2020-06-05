@@ -3,6 +3,8 @@ package gohaystack
 import (
 	"encoding/json"
 	"fmt"
+	"net/url"
+	"time"
 )
 
 type haystack struct {
@@ -51,12 +53,24 @@ func (kv haystackKVPair) String() string {
 func (v *TypedValue) stringJSON() string {
 	// TODO, switch cases depending of the type
 	switch v.Type {
+	case HaystackTypeURI:
+		return fmt.Sprintf(`"u:%v"`, v.Value.(*url.URL))
+	case HaystackTypeTime:
+		return fmt.Sprintf(`"h:%v"`, v.Value.(time.Time).Format("15:04:05"))
+	case HaystackTypeDate:
+		return fmt.Sprintf(`"d:%v"`, v.Value.(time.Time).Format("2006-01-02"))
+	case HaystackTypeDateTime:
+		return fmt.Sprintf(`"t:%v"`, v.Value.(time.Time).Format(time.RFC3339))
 	case HaystackTypeRef:
 		return fmt.Sprintf(`"r:%v"`, v.Value)
+	case HaystackTypeNumber:
+		var unit string
+		if v.Value.(*HaystackNumber).Unit != "" {
+			unit = " " + v.Value.(*HaystackNumber).Unit
+		}
+		return fmt.Sprintf(`"n:%v%v"`, v.Value.(*HaystackNumber).Value, unit)
 	case HaystackTypeMarker:
 		return fmt.Sprintf(`"m:"`)
-	case HaystackTypeNumber:
-		return fmt.Sprintf(`"n:%v"`, v.Value)
 	case HaystackTypeGrid:
 		b, err := json.Marshal(v.Value)
 		if err != nil {
@@ -98,7 +112,7 @@ const (
 	HaystackTypeStr
 	// HaystackTypeDate "d:2014-01-03"
 	HaystackTypeDate
-	// HaystackTypeTime "h:23:59"
+	// HaystackTypeTime "h:23:59:00"
 	HaystackTypeTime
 	// HaystackTypeDateTime "t:2015-06-08T15:47:41-04:00 New_York"
 	HaystackTypeDateTime
