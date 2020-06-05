@@ -1,5 +1,5 @@
 [![GoDoc](https://godoc.org/github.com/owulveryck/gohaystack?status.svg)](https://pkg.go.dev/github.com/owulveryck/gohaystack?tab=doc) [![Go Report Card](https://goreportcard.com/badge/github.com/owulveryck/gohaystack)](https://goreportcard.com/report/github.com/owulveryck/gohaystack)
-![](https://github.com/owulveryck/gohaystack/workflows/.github/workflows/go.yml/badge.svg)
+![](https://github.com/owulveryck/gohaystack/workflows/Go/badge.svg)
 
 # gohaystack
 
