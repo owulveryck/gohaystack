@@ -36,7 +36,6 @@ It also supports a special type `TypedValue` to make conversion easier from the 
 
 Generate a grid and add values:
 
-
 ```go
 testGrid := NewGrid()
 testGrid.AddColumn("col1", "la colonne 1 (string)")
