@@ -30,6 +30,9 @@ func Test_grid_MarshalJSON(t *testing.T) {
 		NewTypedValue(HaystackTypeStr, "bli"),
 		NewTypedValue(HaystackTypeStr, "ble"),
 	})
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	testGrid2 := NewGrid()
 	testGrid2.AddColumn("col1", "la colonne 1 (string)")
@@ -40,6 +43,9 @@ func Test_grid_MarshalJSON(t *testing.T) {
 		NewTypedValue(HaystackTypeStr, "bli"),
 		NewTypedValue(HaystackTypeStr, "ble"),
 	})
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	err = testGrid.AddRow([]*TypedValue{
 		NewTypedValue(HaystackTypeStr, "bla2"),
