@@ -158,3 +158,21 @@ func TestGrid_GetCol(t *testing.T) {
 		})
 	}
 }
+
+func TestGrid_Set(t *testing.T) {
+	g := NewGrid()
+	g.AddColumn("col1", "la colonne 1 (string)")
+	err := g.Set(0, "col1", nil)
+	if err == nil {
+		t.Fail()
+	}
+	g.NewRow()
+	err = g.Set(0, "col1", nil)
+	if err != nil {
+		t.Fail()
+	}
+	err = g.Set(0, "colX", nil)
+	if err == nil {
+		t.Fail()
+	}
+}

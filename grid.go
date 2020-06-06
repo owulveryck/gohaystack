@@ -87,6 +87,9 @@ func (g *Grid) Set(row int, col string, value *TypedValue) error {
 	if _, ok := g.db[col]; !ok {
 		return errors.New("Non existent column " + col)
 	}
+	if row > g.numberOfRows-1 {
+		return errors.New("bad row number")
+	}
 	g.db[col][row] = value
 	return nil
 }
