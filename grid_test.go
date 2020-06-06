@@ -117,7 +117,7 @@ func TestGrid_GetCol(t *testing.T) {
 		{
 			"ok",
 			fields{
-				db: map[string][]*TypedValue{"col1": []*TypedValue{nil}},
+				db: map[string][]*TypedValue{"col1": {nil}},
 			},
 			args{
 				"col1",
@@ -128,7 +128,7 @@ func TestGrid_GetCol(t *testing.T) {
 		{
 			"ko",
 			fields{
-				db: map[string][]*TypedValue{"col1": []*TypedValue{nil}},
+				db: map[string][]*TypedValue{"col1": {nil}},
 			},
 			args{
 				"col2",
