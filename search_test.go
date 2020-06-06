@@ -198,3 +198,54 @@ func TestGrid_GetRowsMatching(t *testing.T) {
 		})
 	}
 }
+
+func Test_inter(t *testing.T) {
+	type args struct {
+		arrs [][]int
+	}
+	tests := []struct {
+		name string
+		args args
+		want []int
+	}{
+		{
+			"empty arrray",
+			args{
+				[][]int{
+					{1, 2, 3, 4},
+					{},
+				},
+			},
+			[]int{},
+		},
+		{
+			"test1",
+			args{
+				[][]int{
+					{1, 2, 3, 4},
+					{2, 3, 4},
+				},
+			},
+			[]int{2, 3, 4},
+		},
+		{
+			"test2",
+			args{
+				[][]int{
+					{1, 2, 3, 4},
+					{2, 3, 4},
+					{3, 4},
+					{5, 4},
+				},
+			},
+			[]int{4},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := inter(tt.args.arrs...); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("inter() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

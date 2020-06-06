@@ -56,6 +56,7 @@ func inter(arrs ...[]int) []int {
 		if len(arrs[i]) == 0 {
 			return []int{}
 		}
+		sort.Ints(arrs[i])
 	}
 	res := []int{}
 	x := arrs[0][0]
