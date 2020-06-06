@@ -113,7 +113,7 @@ func inferType(value interface{}) (HaystackType, interface{}, error) {
 
 // Equal returns true if type and value are equal
 func (tv *TypedValue) Equal(tv2 *TypedValue) bool {
-	if tv == nil && tv2 != tv {
+	if tv2 == nil && tv2 != tv {
 		return false
 	}
 	if tv.Value == nil && tv.Value == tv2.Value {

@@ -1,6 +1,7 @@
 package gohaystack
 
 import (
+	"fmt"
 	"math"
 	"net/url"
 	"reflect"
@@ -276,6 +277,15 @@ func TestTypedValue_Equal(t *testing.T) {
 			},
 			true,
 		},
+		{
+			"Nil arg",
+			fields{
+				Value: nil,
+				Type:  HaystackTypeUndefined,
+			},
+			args{nil},
+			false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -295,5 +305,37 @@ func TestNewTypedValue_wrong(t *testing.T) {
 	tv := NewTypedValue(HaystackLastType+1, true)
 	if tv.Type != HaystackTypeUndefined {
 		t.Fail()
+	}
+}
+
+func TestTypedValue_Hash(t *testing.T) {
+	type fields struct {
+		Type  HaystackType
+		Value interface{}
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   string
+	}{
+		{
+			"simple test",
+			fields{
+				HaystackLastType,
+				"dummy",
+			},
+			fmt.Sprintf("%v/dummy", HaystackLastType),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tv := &TypedValue{
+				Type:  tt.fields.Type,
+				Value: tt.fields.Value,
+			}
+			if got := tv.Hash(); got != tt.want {
+				t.Errorf("TypedValue.Hash() = %v, want %v", got, tt.want)
+			}
+		})
 	}
 }
