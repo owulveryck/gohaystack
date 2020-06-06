@@ -60,6 +60,26 @@ func TestGrid_GetRowsMatching(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name: "No Match 3",
+			fields: &Grid{
+				db: map[string][]*TypedValue{
+					"col1": {
+						{Value: 42},
+						{Value: 43},
+						{Value: 44},
+					},
+				},
+				Cols: map[int]string{
+					0: "col1",
+				},
+			},
+			args: map[string]*TypedValue{
+				"col1": {Value: 48},
+			},
+			want:    nil,
+			wantErr: false,
+		},
+		{
 			name: "Simple match, multi rows",
 			fields: &Grid{
 				db: map[string][]*TypedValue{
@@ -239,6 +259,18 @@ func Test_inter(t *testing.T) {
 				},
 			},
 			[]int{4},
+		},
+		{
+			"test3",
+			args{
+				[][]int{
+					{1, 2, 3, 4},
+					{2, 3, 4},
+					{3, 4},
+					{},
+				},
+			},
+			[]int{},
 		},
 	}
 	for _, tt := range tests {
