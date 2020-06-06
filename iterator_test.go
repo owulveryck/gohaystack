@@ -33,4 +33,7 @@ func TestNewRowIterator(t *testing.T) {
 
 		}
 	}
+	if it.Next() {
+		t.Fail()
+	}
 }
