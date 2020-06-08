@@ -54,7 +54,7 @@ func (v *TypedValue) stringJSON() string {
 	// TODO, switch cases depending of the type
 	switch v.Type {
 	case HaystackTypeURI:
-		return fmt.Sprintf(`"u:%v"`, v.Value.(*url.URL))
+		return fmt.Sprintf(`"u:%v"`, v.Value.(*url.URL).String())
 	case HaystackTypeTime:
 		return fmt.Sprintf(`"h:%v"`, v.Value.(time.Time).Format("15:04:05"))
 	case HaystackTypeDate:
