@@ -3,7 +3,12 @@ package gohaystack
 import (
 	"bytes"
 	"encoding/gob"
+	"net/url"
 )
+
+func init() {
+	gob.Register(new(url.URL))
+}
 
 type typedValue struct {
 	TV    TypedValue

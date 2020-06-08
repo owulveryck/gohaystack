@@ -3,6 +3,7 @@ package gohaystack
 import (
 	"bytes"
 	"encoding/gob"
+	"net/url"
 	"reflect"
 	"testing"
 )
@@ -21,6 +22,12 @@ func TestGrid_GobEncode(t *testing.T) {
 	g.NewRow()
 	g.Set(1, "col2", &TypedValue{
 		Value: 42.42,
+	})
+	g.NewRow()
+	myURL, _ := url.Parse("https://example.com")
+	g.Set(1, "col2", &TypedValue{
+		Type:  HaystackTypeURI,
+		Value: myURL,
 	})
 	var b bytes.Buffer
 	enc := gob.NewEncoder(&b)
