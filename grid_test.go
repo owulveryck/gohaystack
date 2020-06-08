@@ -19,7 +19,7 @@ func TestGrid_UnmarshalJSON(t *testing.T) {
 func TestGrid_NewRow(t *testing.T) {
 	type fields struct {
 		Meta         map[string]string
-		db           map[string][]*TypedValue
+		db           map[string][]*Tag
 		colsDis      map[string]string
 		Cols         map[int]string
 		lastCol      int
@@ -33,7 +33,7 @@ func TestGrid_NewRow(t *testing.T) {
 		{
 			name: "add row",
 			fields: fields{
-				db: map[string][]*TypedValue{
+				db: map[string][]*Tag{
 					"col1": {
 						{Value: 42},
 						{Value: 43},
@@ -71,11 +71,11 @@ func TestGrid_CloneStruct(t *testing.T) {
 	testGrid.AddColumn("col2", "")
 	testGrid.AddColumn("col3", "array")
 	testGrid.AddColumn("col4", "")
-	err := testGrid.AddRow([]*TypedValue{
-		NewTypedValue(HaystackTypeStr, "bla"),
-		NewTypedValue(HaystackTypeStr, "blo"),
-		NewTypedValue(HaystackTypeStr, "blu"),
-		NewTypedValue(HaystackTypeStr, "bli"),
+	err := testGrid.AddRow([]*Tag{
+		NewTag(HaystackTypeStr, "bla"),
+		NewTag(HaystackTypeStr, "blo"),
+		NewTag(HaystackTypeStr, "blu"),
+		NewTag(HaystackTypeStr, "bli"),
 	})
 	if err != nil {
 		t.Fatal(err)
@@ -98,7 +98,7 @@ func TestGrid_CloneStruct(t *testing.T) {
 func TestGrid_GetCol(t *testing.T) {
 	type fields struct {
 		Meta         map[string]string
-		db           map[string][]*TypedValue
+		db           map[string][]*Tag
 		colsDis      map[string]string
 		Cols         map[int]string
 		lastCol      int
@@ -111,24 +111,24 @@ func TestGrid_GetCol(t *testing.T) {
 		name   string
 		fields fields
 		args   args
-		want   []*TypedValue
+		want   []*Tag
 		want1  bool
 	}{
 		{
 			"ok",
 			fields{
-				db: map[string][]*TypedValue{"col1": {nil}},
+				db: map[string][]*Tag{"col1": {nil}},
 			},
 			args{
 				"col1",
 			},
-			[]*TypedValue{nil},
+			[]*Tag{nil},
 			true,
 		},
 		{
 			"ko",
 			fields{
-				db: map[string][]*TypedValue{"col1": {nil}},
+				db: map[string][]*Tag{"col1": {nil}},
 			},
 			args{
 				"col2",

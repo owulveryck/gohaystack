@@ -28,7 +28,7 @@ The `Grid` structure supports a couple of methods to add rows, and columns, and 
 
 Please, see the API documentation for more information.
 
-It also supports a special type `TypedValue` to make conversion easier from the Go'internal typed elements and haystack's typed elements.
+It also supports a special type `Tag` to make conversion easier from the Go'internal typed elements and haystack's typed elements.
 
 ## Example
 
@@ -42,11 +42,11 @@ testGrid.AddColumn("col1", "la colonne 1 (string)")
 testGrid.AddColumn("col2", "")
 testGrid.AddColumn("col3", "array")
 testGrid.AddColumn("col4", "")
-err := testGrid.AddRow([]*TypedValue{
-    NewTypedValue(HaystackTypeStr, "bla"),
-    NewTypedValue(HaystackTypeStr, "blo"),
-    NewTypedValue(HaystackTypeStr, "blu"),
-    NewTypedValue(HaystackTypeStr, "bli"),
+err := testGrid.AddRow([]*Tag{
+    NewTag(HaystackTypeStr, "bla"),
+    NewTag(HaystackTypeStr, "blo"),
+    NewTag(HaystackTypeStr, "blu"),
+    NewTag(HaystackTypeStr, "bli"),
 })
 ```
 

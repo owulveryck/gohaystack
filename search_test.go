@@ -9,14 +9,14 @@ func TestGrid_GetRowsMatching(t *testing.T) {
 	tests := []struct {
 		name    string
 		fields  *Grid
-		args    map[string]*TypedValue
-		want    [][]*TypedValue
+		args    map[string]*Tag
+		want    [][]*Tag
 		wantErr bool
 	}{
 		{
 			name:   "No Match 1",
 			fields: &Grid{},
-			args: map[string]*TypedValue{
+			args: map[string]*Tag{
 				"col1": {},
 			},
 			want:    nil,
@@ -25,11 +25,11 @@ func TestGrid_GetRowsMatching(t *testing.T) {
 		{
 			name: "No Match 2",
 			fields: &Grid{
-				db: map[string][]*TypedValue{
+				db: map[string][]*Tag{
 					"col1": nil,
 				},
 			},
-			args: map[string]*TypedValue{
+			args: map[string]*Tag{
 				"col1": nil,
 			},
 			want:    nil,
@@ -38,7 +38,7 @@ func TestGrid_GetRowsMatching(t *testing.T) {
 		{
 			name: "Simple match",
 			fields: &Grid{
-				db: map[string][]*TypedValue{
+				db: map[string][]*Tag{
 					"col1": {
 						{Value: 42},
 						{Value: 43},
@@ -49,12 +49,12 @@ func TestGrid_GetRowsMatching(t *testing.T) {
 					0: "col1",
 				},
 			},
-			args: map[string]*TypedValue{
+			args: map[string]*Tag{
 				"col1": {Value: 42},
 			},
-			want: [][]*TypedValue{
+			want: [][]*Tag{
 				{
-					&TypedValue{Value: 42},
+					&Tag{Value: 42},
 				},
 			},
 			wantErr: false,
@@ -62,7 +62,7 @@ func TestGrid_GetRowsMatching(t *testing.T) {
 		{
 			name: "No Match 3",
 			fields: &Grid{
-				db: map[string][]*TypedValue{
+				db: map[string][]*Tag{
 					"col1": {
 						{Value: 42},
 						{Value: 43},
@@ -73,7 +73,7 @@ func TestGrid_GetRowsMatching(t *testing.T) {
 					0: "col1",
 				},
 			},
-			args: map[string]*TypedValue{
+			args: map[string]*Tag{
 				"col1": {Value: 48},
 			},
 			want:    nil,
@@ -82,7 +82,7 @@ func TestGrid_GetRowsMatching(t *testing.T) {
 		{
 			name: "Simple match, multi rows",
 			fields: &Grid{
-				db: map[string][]*TypedValue{
+				db: map[string][]*Tag{
 					"col1": {
 						{Value: 42},
 						{Value: 43},
@@ -94,10 +94,10 @@ func TestGrid_GetRowsMatching(t *testing.T) {
 					0: "col1",
 				},
 			},
-			args: map[string]*TypedValue{
+			args: map[string]*Tag{
 				"col1": {Value: 42},
 			},
-			want: [][]*TypedValue{
+			want: [][]*Tag{
 				{
 					{Value: 42},
 				},
@@ -110,7 +110,7 @@ func TestGrid_GetRowsMatching(t *testing.T) {
 		{
 			name: "Simple match, multi rows, multi colums",
 			fields: &Grid{
-				db: map[string][]*TypedValue{
+				db: map[string][]*Tag{
 					"col1": {
 						{Value: 42},
 						{Value: 43},
@@ -129,10 +129,10 @@ func TestGrid_GetRowsMatching(t *testing.T) {
 					1: "col2",
 				},
 			},
-			args: map[string]*TypedValue{
+			args: map[string]*Tag{
 				"col1": {Value: 42},
 			},
-			want: [][]*TypedValue{
+			want: [][]*Tag{
 				{
 					{Value: 42},
 					{},
@@ -147,7 +147,7 @@ func TestGrid_GetRowsMatching(t *testing.T) {
 		{
 			name: "Multi match, multi rows, multi colums",
 			fields: &Grid{
-				db: map[string][]*TypedValue{
+				db: map[string][]*Tag{
 					"col1": {
 						{Value: 42},
 						{Value: 43},
@@ -166,11 +166,11 @@ func TestGrid_GetRowsMatching(t *testing.T) {
 					1: "col2",
 				},
 			},
-			args: map[string]*TypedValue{
+			args: map[string]*Tag{
 				"col1": {Value: 42},
 				"col2": {Value: 42.42},
 			},
-			want: [][]*TypedValue{
+			want: [][]*Tag{
 				{
 					{Value: 42},
 					{Value: 42.42},
@@ -208,7 +208,7 @@ func TestGrid_GetRowsMatching(t *testing.T) {
 					if got[i][j] == tt.want[i][j] && got[i][j] == nil {
 						continue
 					}
-					if got[i][j].Type != tt.want[i][j].Type ||
+					if got[i][j].Kind != tt.want[i][j].Kind ||
 						got[i][j].Value != tt.want[i][j].Value {
 						t.Errorf("Grid.GetRowsMatching() = %v, want %v", got[i][j], tt.want[i][j])
 

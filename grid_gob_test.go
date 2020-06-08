@@ -13,20 +13,20 @@ func TestGrid_GobEncode(t *testing.T) {
 	g.AddColumn("col1", "col1")
 	g.AddColumn("col2", "col2")
 	g.NewRow()
-	g.Set(0, "col1", &TypedValue{
+	g.Set(0, "col1", &Tag{
 		Value: "bla",
 	})
-	g.Set(0, "col2", &TypedValue{
+	g.Set(0, "col2", &Tag{
 		Value: 42,
 	})
 	g.NewRow()
-	g.Set(1, "col2", &TypedValue{
+	g.Set(1, "col2", &Tag{
 		Value: 42.42,
 	})
 	g.NewRow()
 	myURL, _ := url.Parse("https://example.com")
-	g.Set(1, "col2", &TypedValue{
-		Type:  HaystackTypeURI,
+	g.Set(1, "col2", &Tag{
+		Kind:  HaystackTypeURI,
 		Value: myURL,
 	})
 	var b bytes.Buffer

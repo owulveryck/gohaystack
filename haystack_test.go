@@ -11,11 +11,11 @@ func Test_grid_MarshalJSON(t *testing.T) {
 	testGrid := NewGrid()
 	testGrid.AddColumn("col1", "la colonne 1 (string)")
 	testGrid.AddColumn("col2", "")
-	err := testGrid.AddRow([]*TypedValue{
-		NewTypedValue(HaystackTypeStr, "bla"),
-		NewTypedValue(HaystackTypeStr, "blo"),
-		NewTypedValue(HaystackTypeStr, "blu"),
-		NewTypedValue(HaystackTypeStr, "bli"),
+	err := testGrid.AddRow([]*Tag{
+		NewTag(HaystackTypeStr, "bla"),
+		NewTag(HaystackTypeStr, "blo"),
+		NewTag(HaystackTypeStr, "blu"),
+		NewTag(HaystackTypeStr, "bli"),
 	})
 	if err == nil {
 		t.Fatal(err)
@@ -23,12 +23,12 @@ func Test_grid_MarshalJSON(t *testing.T) {
 	testGrid.AddColumn("col3", "array")
 	testGrid.AddColumn("col4", "")
 	testGrid.AddColumn("col5", "grid")
-	err = testGrid.AddRow([]*TypedValue{
-		NewTypedValue(HaystackTypeStr, "bla"),
-		NewTypedValue(HaystackTypeStr, "blo"),
-		NewTypedValue(HaystackTypeStr, "blu"),
-		NewTypedValue(HaystackTypeStr, "bli"),
-		NewTypedValue(HaystackTypeStr, "ble"),
+	err = testGrid.AddRow([]*Tag{
+		NewTag(HaystackTypeStr, "bla"),
+		NewTag(HaystackTypeStr, "blo"),
+		NewTag(HaystackTypeStr, "blu"),
+		NewTag(HaystackTypeStr, "bli"),
+		NewTag(HaystackTypeStr, "ble"),
 	})
 	if err != nil {
 		t.Fatal(err)
@@ -38,21 +38,21 @@ func Test_grid_MarshalJSON(t *testing.T) {
 	testGrid2.AddColumn("col1", "la colonne 1 (string)")
 	testGrid2.AddColumn("col2", "")
 	testGrid2.AddColumn("col3", "string")
-	err = testGrid2.AddRow([]*TypedValue{
-		NewTypedValue(HaystackTypeStr, "blu"),
-		NewTypedValue(HaystackTypeStr, "bli"),
-		NewTypedValue(HaystackTypeStr, "ble"),
+	err = testGrid2.AddRow([]*Tag{
+		NewTag(HaystackTypeStr, "blu"),
+		NewTag(HaystackTypeStr, "bli"),
+		NewTag(HaystackTypeStr, "ble"),
 	})
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	err = testGrid.AddRow([]*TypedValue{
-		NewTypedValue(HaystackTypeStr, "bla2"),
-		NewTypedValue(HaystackTypeStr, "blo2"),
-		NewTypedValue(HaystackTypeStr, "blu2"),
-		NewTypedValue(HaystackTypeStr, "bli2"),
-		NewTypedValue(HaystackTypeGrid, testGrid2),
+	err = testGrid.AddRow([]*Tag{
+		NewTag(HaystackTypeStr, "bla2"),
+		NewTag(HaystackTypeStr, "blo2"),
+		NewTag(HaystackTypeStr, "blu2"),
+		NewTag(HaystackTypeStr, "bli2"),
+		NewTag(HaystackTypeGrid, testGrid2),
 	})
 	if err != nil {
 		t.Fatal(err)
@@ -68,13 +68,13 @@ func Test_haystackRow_MarshalJSON(t *testing.T) {
 	hr := haystackRow{
 		haystackKVPair{
 			Name: "test",
-			Value: &TypedValue{
+			Value: &Tag{
 				Value: "a",
 			},
 		},
 		haystackKVPair{
 			Name: "test2",
-			Value: &TypedValue{
+			Value: &Tag{
 				Value: "b",
 			},
 		},
@@ -86,10 +86,10 @@ func Test_haystackRow_MarshalJSON(t *testing.T) {
 	t.Log(string(b))
 }
 
-func TestTypedValue_stringJSON(t *testing.T) {
+func TestTag_stringJSON(t *testing.T) {
 	uri, _ := url.Parse("https://bladibla")
 	type fields struct {
-		Type  HaystackType
+		Kind  Kind
 		Value interface{}
 	}
 	tests := []struct {
@@ -169,12 +169,12 @@ func TestTypedValue_stringJSON(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			v := &TypedValue{
-				Type:  tt.fields.Type,
+			v := &Tag{
+				Kind:  tt.fields.Kind,
 				Value: tt.fields.Value,
 			}
 			if got := v.stringJSON(); got != tt.want {
-				t.Errorf("TypedValue.stringJSON() = %v, want %v", got, tt.want)
+				t.Errorf("Tag.stringJSON() = %v, want %v", got, tt.want)
 			}
 		})
 	}

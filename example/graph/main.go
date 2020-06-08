@@ -86,7 +86,7 @@ func (gh *graphHandler) addNodes() error {
 			return nil
 		}
 		row := it.Row()
-		content := make([]*gohaystack.TypedValue, len(row))
+		content := make([]*gohaystack.Tag, len(row))
 		copy(content, row)
 		n := &node{
 			id:      gh.nodesCounter,
@@ -124,7 +124,7 @@ func (gh *graphHandler) addEdges() error {
 
 type node struct {
 	id      int64
-	content []*gohaystack.TypedValue
+	content []*gohaystack.Tag
 }
 
 // node's uniq ID to fulfil graph.Node
@@ -160,7 +160,7 @@ func (n *node) generateLabel() string {
 			if tmp != "" {
 				tmp = tmp + "|"
 			}
-			switch v.Type {
+			switch v.Kind {
 			case gohaystack.HaystackTypeRef:
 				tmp = tmp + fmt.Sprintf("{<%v>%v|@%v}", cols[i], cols[i], v.Value)
 			case gohaystack.HaystackTypeMarker:

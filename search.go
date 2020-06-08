@@ -6,17 +6,17 @@ import (
 )
 
 // GetRowsMatching returns rows matching the match hashmap.
-// The key of match is the column name and *TypedValue a non nil value to be matched.
+// The key of match is the column name and *Tag a non nil value to be matched.
 // The return value is a list of rows (the row is of length len(g.Cols))
 // This function returns an error if the key of match does not exist in the grid
-// and if any of the pointer to TypedValue is nil in the request.
-func (g *Grid) GetRowsMatching(match map[string]*TypedValue) ([][]*TypedValue, error) {
+// and if any of the pointer to Tag is nil in the request.
+func (g *Grid) GetRowsMatching(match map[string]*Tag) ([][]*Tag, error) {
 	allMatchingRows := make([][]int, 0)
 	for k, v := range match {
 		if v == nil {
 			return nil, errors.New("Cannot search nil elements")
 		}
-		var col []*TypedValue
+		var col []*Tag
 		var ok bool
 		if col, ok = g.db[k]; !ok {
 			return nil, errors.New("Column does not exist " + k)
@@ -39,10 +39,10 @@ func (g *Grid) GetRowsMatching(match map[string]*TypedValue) ([][]*TypedValue, e
 	} else {
 		rowsID = inter(allMatchingRows...)
 	}
-	rows := make([][]*TypedValue, len(rowsID))
+	rows := make([][]*Tag, len(rowsID))
 	for i := 0; i < len(rows); i++ {
 		id := rowsID[i]
-		rows[i] = make([]*TypedValue, len(g.Cols))
+		rows[i] = make([]*Tag, len(g.Cols))
 		for c := 0; c < len(g.Cols); c++ {
 			column := g.Cols[c]
 			rows[i][c] = g.db[column][id]

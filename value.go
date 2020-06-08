@@ -10,23 +10,23 @@ import (
 	"time"
 )
 
-// NewTypedValue holding the haystack type (not tag).
+// NewTag holding the haystack type (not tag).
 // There is not check done to see if the interface{} underlying type is compatible
 // with the haystack type.
 // This function returns a "HaystackTypeUndefined" if the provided Type is not in the enum list of this package.
-func NewTypedValue(typ HaystackType, value interface{}) *TypedValue {
+func NewTag(typ Kind, value interface{}) *Tag {
 	if typ >= HaystackLastType {
 		typ = HaystackTypeUndefined
 	}
-	return &TypedValue{
-		Type:  typ,
+	return &Tag{
+		Kind:  typ,
 		Value: value,
 	}
 }
 
-// TypedValue is any value that can be associated with a HaystackType
-type TypedValue struct {
-	Type  HaystackType
+// Tag is any value that can be associated with a HaystackType
+type Tag struct {
+	Kind  Kind
 	Value interface{}
 }
 
@@ -37,12 +37,12 @@ type HaystackNumber struct {
 }
 
 // Hash ...
-func (tv *TypedValue) Hash() string {
-	return fmt.Sprintf("%v/%v", tv.Type, tv.Value)
+func (tv *Tag) Hash() string {
+	return fmt.Sprintf("%v/%v", tv.Kind, tv.Value)
 }
 
 // TODO ...
-func inferType(value interface{}) (HaystackType, interface{}, error) {
+func inferType(value interface{}) (Kind, interface{}, error) {
 	if _, ok := value.(bool); ok {
 		return HaystackTypeBool, value, nil
 	}
@@ -112,7 +112,7 @@ func inferType(value interface{}) (HaystackType, interface{}, error) {
 }
 
 // Equal returns true if type and value are equal
-func (tv *TypedValue) Equal(tv2 *TypedValue) bool {
+func (tv *Tag) Equal(tv2 *Tag) bool {
 	if tv2 == nil && tv2 != tv {
 		return false
 	}
@@ -122,7 +122,7 @@ func (tv *TypedValue) Equal(tv2 *TypedValue) bool {
 	if !reflect.DeepEqual(tv.Value, tv2.Value) {
 		return false
 	}
-	if !reflect.DeepEqual(tv.Type, tv2.Type) {
+	if !reflect.DeepEqual(tv.Kind, tv2.Kind) {
 		return false
 	}
 	return true

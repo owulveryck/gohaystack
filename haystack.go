@@ -27,7 +27,7 @@ type haystackRow []haystackKVPair
 
 type haystackKVPair struct {
 	Name  string
-	Value *TypedValue
+	Value *Tag
 }
 
 func (hr haystackRow) MarshalJSON() ([]byte, error) {
@@ -50,9 +50,9 @@ func (kv haystackKVPair) String() string {
 	return fmt.Sprintf(`"%v": %v`, kv.Name, kv.Value.stringJSON())
 }
 
-func (v *TypedValue) stringJSON() string {
+func (v *Tag) stringJSON() string {
 	// TODO, switch cases depending of the type
-	switch v.Type {
+	switch v.Kind {
 	case HaystackTypeURI:
 		return fmt.Sprintf(`"u:%v"`, v.Value.(*url.URL).String())
 	case HaystackTypeTime:
@@ -83,11 +83,11 @@ func (v *TypedValue) stringJSON() string {
 }
 
 // HaystackType represents a type handled by haystack
-type HaystackType int
+type Kind int
 
 const (
 	// HaystackTypeUndefined ...
-	HaystackTypeUndefined HaystackType = iota
+	HaystackTypeUndefined Kind = iota
 	// HaystackTypeGrid is a Grid object
 	HaystackTypeGrid
 	// HaystackTypeList Array
