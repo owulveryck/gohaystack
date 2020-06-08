@@ -11,7 +11,7 @@ func NewGrid() *Grid {
 		Meta: map[string]string{
 			"Ver": "3,0",
 		},
-		db:      make(map[string][]*TypedValue),
+		db:      make(map[string][]*Tag),
 		colsDis: make(map[string]string),
 		Cols:    make(map[int]string),
 	}
@@ -20,10 +20,10 @@ func NewGrid() *Grid {
 // Grid is a simple database structure, column based
 type Grid struct {
 	Meta         map[string]string
-	db           map[string][]*TypedValue // column based db
-	colsDis      map[string]string        // description of the column
-	Cols         map[int]string           // this is a reverse index string is the col name, and int its index
-	lastCol      int                      // index of the last column
+	db           map[string][]*Tag // column based db
+	colsDis      map[string]string // description of the column
+	Cols         map[int]string    // this is a reverse index string is the col name, and int its index
+	lastCol      int               // index of the last column
 	numberOfRows int
 }
 
@@ -42,7 +42,7 @@ func (g *Grid) CloneStruct() *Grid {
 	for k, v := range g.Cols {
 		cols[k] = v
 	}
-	emptyDB := make(map[string][]*TypedValue, colsNum)
+	emptyDB := make(map[string][]*Tag, colsNum)
 	for k := range g.db {
 		emptyDB[k] = nil
 	}
@@ -60,7 +60,7 @@ func (g *Grid) CloneStruct() *Grid {
 // for use after AddRow has been called.
 // Column is added at the end of the stack, order of call to this function matters.
 func (g *Grid) AddColumn(name, dis string) {
-	g.db[name] = make([]*TypedValue, g.numberOfRows)
+	g.db[name] = make([]*Tag, g.numberOfRows)
 	g.Cols[g.lastCol] = name
 	g.colsDis[name] = dis
 	g.lastCol++
@@ -76,14 +76,14 @@ func (g *Grid) NewRow() int {
 }
 
 // GetCol returns the column value and a boolean to false if the column does not exists
-func (g *Grid) GetCol(col string) ([]*TypedValue, bool) {
+func (g *Grid) GetCol(col string) ([]*Tag, bool) {
 	res, ok := g.db[col]
 	return res, ok
 }
 
 // Set the value in the grid; silently override any existing value.
 // returns an error if col or row is out of range.
-func (g *Grid) Set(row int, col string, value *TypedValue) error {
+func (g *Grid) Set(row int, col string, value *Tag) error {
 	if _, ok := g.db[col]; !ok {
 		return errors.New("Non existent column " + col)
 	}
@@ -95,7 +95,7 @@ func (g *Grid) Set(row int, col string, value *TypedValue) error {
 }
 
 // AddRow to the grid at the end of the existing row stack
-func (g *Grid) AddRow(row []*TypedValue) error {
+func (g *Grid) AddRow(row []*Tag) error {
 	if len(row) != g.lastCol {
 		return errors.New("row size does not fit number of cols")
 	}
@@ -158,7 +158,7 @@ func (g *Grid) UnmarshalJSON(b []byte) error {
 			if err != nil {
 				return err
 			}
-			g.Set(r, k, NewTypedValue(typ, val))
+			g.Set(r, k, NewTag(typ, val))
 		}
 	}
 	return nil

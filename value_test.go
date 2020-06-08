@@ -24,7 +24,7 @@ func Test_inferType(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    HaystackType
+		want    Kind
 		want1   interface{}
 		wantErr bool
 	}{
@@ -221,13 +221,13 @@ func Test_inferType(t *testing.T) {
 	}
 }
 
-func TestTypedValue_Equal(t *testing.T) {
+func TestTag_Equal(t *testing.T) {
 	type fields struct {
-		Type  HaystackType
+		Kind  Kind
 		Value interface{}
 	}
 	type args struct {
-		tv2 *TypedValue
+		tv2 *Tag
 	}
 	tests := []struct {
 		name   string
@@ -242,8 +242,8 @@ func TestTypedValue_Equal(t *testing.T) {
 				"b",
 			},
 			args{
-				&TypedValue{
-					Type:  HaystackTypeStr,
+				&Tag{
+					Kind:  HaystackTypeStr,
 					Value: "b",
 				},
 			},
@@ -253,11 +253,11 @@ func TestTypedValue_Equal(t *testing.T) {
 			"Nil value",
 			fields{
 				Value: nil,
-				Type:  HaystackTypeUndefined,
+				Kind:  HaystackTypeUndefined,
 			},
 			args{
-				&TypedValue{
-					Type:  HaystackTypeStr,
+				&Tag{
+					Kind:  HaystackTypeStr,
 					Value: "b",
 				},
 			},
@@ -267,11 +267,11 @@ func TestTypedValue_Equal(t *testing.T) {
 			"Nil value equal",
 			fields{
 				Value: nil,
-				Type:  HaystackTypeUndefined,
+				Kind:  HaystackTypeUndefined,
 			},
 			args{
-				&TypedValue{
-					Type:  HaystackTypeStr,
+				&Tag{
+					Kind:  HaystackTypeStr,
 					Value: nil,
 				},
 			},
@@ -281,7 +281,7 @@ func TestTypedValue_Equal(t *testing.T) {
 			"Nil arg",
 			fields{
 				Value: nil,
-				Type:  HaystackTypeUndefined,
+				Kind:  HaystackTypeUndefined,
 			},
 			args{nil},
 			false,
@@ -289,28 +289,28 @@ func TestTypedValue_Equal(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tv := &TypedValue{
-				Type:  tt.fields.Type,
+			tv := &Tag{
+				Kind:  tt.fields.Kind,
 				Value: tt.fields.Value,
 			}
 			if got := tv.Equal(tt.args.tv2); got != tt.want {
-				t.Errorf("TypedValue.Equal() = %v, want %v", got, tt.want)
+				t.Errorf("Tag.Equal() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 
 }
 
-func TestNewTypedValue_wrong(t *testing.T) {
-	tv := NewTypedValue(HaystackLastType+1, true)
-	if tv.Type != HaystackTypeUndefined {
+func TestNewTag_wrong(t *testing.T) {
+	tv := NewTag(HaystackLastType+1, true)
+	if tv.Kind != HaystackTypeUndefined {
 		t.Fail()
 	}
 }
 
-func TestTypedValue_Hash(t *testing.T) {
+func TestTag_Hash(t *testing.T) {
 	type fields struct {
-		Type  HaystackType
+		Kind  Kind
 		Value interface{}
 	}
 	tests := []struct {
@@ -329,12 +329,12 @@ func TestTypedValue_Hash(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tv := &TypedValue{
-				Type:  tt.fields.Type,
+			tv := &Tag{
+				Kind:  tt.fields.Kind,
 				Value: tt.fields.Value,
 			}
 			if got := tv.Hash(); got != tt.want {
-				t.Errorf("TypedValue.Hash() = %v, want %v", got, tt.want)
+				t.Errorf("Tag.Hash() = %v, want %v", got, tt.want)
 			}
 		})
 	}

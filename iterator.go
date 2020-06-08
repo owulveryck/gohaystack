@@ -20,8 +20,8 @@ func (r *RowIterator) Len() int {
 }
 
 // Row returns the current row of the iterator. Next must have been called prior to a call to Row.
-func (r *RowIterator) Row() []*TypedValue {
-	row := make([]*TypedValue, len(r.grid.Cols))
+func (r *RowIterator) Row() []*Tag {
+	row := make([]*Tag, len(r.grid.Cols))
 	for i := 0; i < len(r.grid.Cols); i++ {
 		row[i] = r.grid.db[r.grid.Cols[i]][r.cur]
 	}

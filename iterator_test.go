@@ -10,10 +10,10 @@ func TestNewRowIterator(t *testing.T) {
 	g.AddColumn("col2", "")
 	g.AddColumn("col3", "string")
 	for i := 0; i < 5; i++ {
-		err := g.AddRow([]*TypedValue{
-			NewTypedValue(HaystackTypeNumber, i),
-			NewTypedValue(HaystackTypeStr, "bli"),
-			NewTypedValue(HaystackTypeStr, "ble"),
+		err := g.AddRow([]*Tag{
+			NewTag(HaystackTypeNumber, i),
+			NewTag(HaystackTypeStr, "bli"),
+			NewTag(HaystackTypeStr, "ble"),
 		})
 		if err != nil {
 			t.Fatal(err)
