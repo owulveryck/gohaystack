@@ -86,7 +86,7 @@ func (gh *graphHandler) addNodes() error {
 			return nil
 		}
 		row := it.Row()
-		content := make([]*gohaystack.Tag, len(row))
+		content := make([]*gohaystack.Value, len(row))
 		copy(content, row)
 		n := &node{
 			id:      gh.nodesCounter,
@@ -124,7 +124,7 @@ func (gh *graphHandler) addEdges() error {
 
 type node struct {
 	id      int64
-	content []*gohaystack.Tag
+	content []*gohaystack.Value
 }
 
 // node's uniq ID to fulfil graph.Node

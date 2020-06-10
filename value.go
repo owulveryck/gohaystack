@@ -2,128 +2,124 @@ package gohaystack
 
 import (
 	"errors"
-	"fmt"
 	"net/url"
-	"reflect"
-	"strconv"
-	"strings"
 	"time"
 )
 
-// NewTag holding the haystack type (not tag).
-// There is not check done to see if the interface{} underlying type is compatible
-// with the haystack type.
-// This function returns a "HaystackTypeUndefined" if the provided Type is not in the enum list of this package.
-func NewTag(typ Kind, value interface{}) *Tag {
-	if typ >= HaystackLastType {
-		typ = HaystackTypeUndefined
+type kind int
+
+// Value is an haystack value
+type Value struct {
+	kind   kind
+	str    *string
+	number struct {
+		value float32
+		unit  string
 	}
-	return &Tag{
-		Kind:  typ,
-		Value: value,
+	t     *time.Time
+	u     *url.URL
+	ref   *HaystackID
+	g     *Grid
+	coord struct {
+		long float32
+		lat  float32
 	}
 }
 
-// Tag is any value that can be associated with a HaystackType
-type Tag struct {
-	Kind  Kind
-	Value interface{}
+// UnmarshalJSON extract a value from b
+func (v *Value) UnmarshalJSON(b []byte) error {
+	if b == nil || len(b) == 0 {
+		return errors.New("Cannot unmarshal nil or empty value")
+	}
+
+	return errors.New("Unable to unmarshal value " + string(b))
 }
 
-// HaystackNumber is an integer or floating point number annotated with an optional unit of measurement.
-type HaystackNumber struct {
-	Value float32
-	Unit  string
-}
-
-// Hash ...
-func (tv *Tag) Hash() string {
-	return fmt.Sprintf("%v/%v", tv.Kind, tv.Value)
-}
-
-// TODO ...
-func inferType(value interface{}) (Kind, interface{}, error) {
-	if _, ok := value.(bool); ok {
-		return HaystackTypeBool, value, nil
-	}
-	valueString, ok := value.(string)
-	if !ok {
-		return HaystackTypeUndefined, nil, errors.New("value should be a string")
-	}
-	vals := strings.Split(valueString, ":")
-	if len(vals) <= 1 {
-		return HaystackTypeStr, value, nil
-	}
-	if len(vals[0]) != 1 {
-		return HaystackTypeUndefined, value, nil
-	}
-	switch vals[0] {
-	case "s":
-		return HaystackTypeStr, strings.Join(vals[1:], ":"), nil
-	case "n":
-		elements := strings.Fields(strings.Join(vals[1:], ":"))
-		f, err := strconv.ParseFloat(elements[0], 32)
-		if err != nil {
-			return HaystackTypeUndefined, nil, err
-		}
-		var unit string
-		if len(elements) > 1 {
-			unit = strings.Join(elements[1:], " ")
-		}
-		return HaystackTypeNumber, &HaystackNumber{
-			Value: float32(f),
-			Unit:  unit,
-		}, nil
-	case "r":
-		return HaystackTypeRef, strings.Fields(strings.Join(vals[1:], ":"))[0], nil
-	case "d":
-		t, err := time.Parse("2006-01-02", strings.Join(vals[1:], ":"))
-		return HaystackTypeDate, t, err
-	case "h":
-		t, err := time.Parse("2006-01-02 15:04:05 +0000 UTC", "0000-01-01 "+strings.Join(vals[1:], ":")+" +0000 UTC")
-		return HaystackTypeTime, t, err
-	case "t":
-		elements := strings.Fields(strings.Join(vals[1:], ":"))
-		var err error
-		var t time.Time
-		/*
-			var loc *time.Location
-				if len(elements) > 1 {
-					loc, err = time.LoadLocation(elements[1])
-					if err != nil {
-						return HaystackTypeUndefined, nil, err
-					}
-					t, err = time.ParseInLocation(time.RFC3339, elements[0], loc)
-				} else {
-		*/
-		t, err = time.Parse(time.RFC3339, elements[0])
-		/*
-			}
-		*/
-		return HaystackTypeDateTime, t, err
-	case "m":
-		return HaystackTypeMarker, true, nil
-	case "u":
-		u, err := url.Parse(strings.Join(vals[1:], ":"))
-		return HaystackTypeURI, u, err
+// MarshalJSON encode the value in format compatible with haystack's JSON:
+// https://www.project-haystack.org/doc/Json
+func (v *Value) MarshalJSON() ([]byte, error) {
+	var output string
+	switch v.kind {
+	case haystackTypeStr:
+		output = `"s:` + *v.str + `"`
+	case haystackTypeRef:
+		output = `"r:` + string(*v.ref) + `"`
+	case haystackTypeMarker:
+		output = `"m:"`
+	case haystackTypeURI:
+		output = `"u:` + (*v.u).String() + `"`
 	default:
-		return HaystackTypeUndefined, strings.Join(vals[1:], ":"), nil
+		return nil, errors.New("type not handled")
+	}
+	return []byte(output), nil
+}
+
+// NewRef new reference
+func NewRef(r *HaystackID) *Value {
+	return &Value{
+		kind: haystackTypeRef,
+		ref:  r,
 	}
 }
 
-// Equal returns true if type and value are equal
-func (tv *Tag) Equal(tv2 *Tag) bool {
-	if tv2 == nil && tv2 != tv {
-		return false
+// NewStr new string value
+func NewStr(s string) *Value {
+	return &Value{
+		kind: haystackTypeStr,
+		str:  &s,
 	}
-	if tv.Value == nil && tv.Value == tv2.Value {
-		return true
-	}
-	if !reflect.DeepEqual(tv.Value, tv2.Value) {
-		return false
-	}
-	if !reflect.DeepEqual(tv.Kind, tv2.Kind) {
-		return false
-	}
-	return true
 }
+
+// MarkerValue ...
+var MarkerValue = &Value{
+	kind: haystackTypeMarker,
+}
+
+// GetString value; returns an error if the underlying type is not an haystack string
+func (v *Value) GetString() (string, error) {
+	if v.kind != haystackTypeStr {
+		return "", errors.New("value type is not a string")
+	}
+	return *v.str, nil
+}
+
+const (
+	// haystackTypeUndefined ...
+	haystackTypeUndefined kind = iota
+	// haystackTypeGrid is a Grid object
+	haystackTypeGrid
+	// haystackTypeList Array
+	haystackTypeList
+	// haystackTypeDict Object
+	haystackTypeDict
+	// haystackTypenull null
+	haystackTypenull
+	// haystackTypeBool Boolean
+	haystackTypeBool
+	// haystackTypeMarker "m:"
+	haystackTypeMarker
+	// haystackTypeRemove "-:"
+	haystackTypeRemove
+	// haystackTypeNA "z:"
+	haystackTypeNA
+	// haystackTypeNumber "n:<float> [unit]" "n:45.5" "n:73.2 °F" "n:-INF"
+	haystackTypeNumber
+	// haystackTypeRef "r:<id> [dis]"  "r:abc-123" "r:abc-123 RTU #3"
+	haystackTypeRef
+	// haystackTypeStr "hello" "s:hello"
+	haystackTypeStr
+	// haystackTypeDate "d:2014-01-03"
+	haystackTypeDate
+	// haystackTypeTime "h:23:59:00"
+	haystackTypeTime
+	// haystackTypeDateTime "t:2015-06-08T15:47:41-04:00 New_York"
+	haystackTypeDateTime
+	// haystackTypeURI "u:http://project-haystack.org/"
+	haystackTypeURI
+	// haystackTypeCoord "c:<lat>,<lng>" "c:37.545,-77.449"
+	haystackTypeCoord
+	//haystackTypeXStr "x:Type:value"
+	haystackTypeXStr
+	// haystackLastType ...
+	haystackLastType
+)

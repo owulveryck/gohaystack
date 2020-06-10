@@ -1,340 +1,271 @@
 package gohaystack
 
 import (
-	"fmt"
-	"math"
 	"net/url"
 	"reflect"
 	"testing"
 	"time"
 )
 
-func Test_inferType(t *testing.T) {
-	location, err := time.LoadLocation("America/New_York")
-	if err != nil {
-		t.Fatal(err)
-	}
-	refTime := time.Date(2006, time.January, 01, 23, 2, 0, 0, location)
-	date, _ := time.Parse("2006-01-02", refTime.Format("2006-01-02"))
-	curTime, _ := time.Parse("15:04:00", refTime.Format("15:04:00"))
-
-	type args struct {
-		value interface{}
+func TestValue_MarshalJSON(t *testing.T) {
+	simpleTestStr := "test"
+	id := NewHaystackID("id")
+	u, _ := url.Parse("https://example.com")
+	//simpleTestStrWithColon := "test:bla"
+	type fields struct {
+		kind   kind
+		str    *string
+		number struct {
+			value float32
+			unit  string
+		}
+		t     *time.Time
+		u     *url.URL
+		ref   *HaystackID
+		g     *Grid
+		coord struct {
+			long float32
+			lat  float32
+		}
 	}
 	tests := []struct {
 		name    string
-		args    args
-		want    Kind
-		want1   interface{}
+		fields  fields
+		want    []byte
 		wantErr bool
 	}{
 		{
-			"Invalid 1",
-			args{
-				value: 3.4,
+			"simple url",
+			fields{
+				kind: haystackTypeURI,
+				u:    u,
 			},
-			HaystackTypeUndefined,
+			[]byte(`"u:https://example.com"`),
+			false,
+		},
+		{
+			"simple marker",
+			fields{
+				kind: haystackTypeMarker,
+			},
+			[]byte(`"m:"`),
+			false,
+		},
+		{
+			"simple reference",
+			fields{
+				kind: haystackTypeRef,
+				ref:  id,
+			},
+			[]byte(`"r:` + string(*id) + `"`),
+			false,
+		},
+		{
+			"simple string",
+			fields{
+				kind: haystackTypeStr,
+				str:  &simpleTestStr,
+			},
+			[]byte(`"s:` + simpleTestStr + `"`),
+			false,
+		},
+		{
+			"Unhandled",
+			fields{
+				kind: haystackLastType,
+			},
 			nil,
 			true,
-		},
-		{
-			"Invalid 2",
-			args{
-				value: "é:bla",
-			},
-			HaystackTypeUndefined,
-			`é:bla`,
-			false,
-		},
-		{
-			"Time",
-			args{
-				value: "h:" + refTime.Format("15:04:00"),
-			},
-			HaystackTypeTime,
-			curTime,
-			false,
-		},
-		{
-			"DateTime",
-			args{
-				value: "t:2006-01-01T23:02:00-05:00 America/New_York",
-			},
-			HaystackTypeDateTime,
-			refTime,
-			false,
-		},
-		{
-			"DateTime without TZ",
-			args{
-				value: "t:2006-01-01T23:02:00-05:00",
-			},
-			HaystackTypeDateTime,
-			refTime,
-			false,
-		},
-		{
-			"Date",
-			args{
-				value: "d:" + refTime.Format("2006-01-02"),
-			},
-			HaystackTypeDate,
-			date,
-			false,
-		},
-		{
-			"URI valid",
-			args{
-				value: "u:s3://blabla/bla",
-			},
-			HaystackTypeURI,
-			&url.URL{
-				Scheme: "s3",
-				Host:   "blabla",
-				Path:   "/bla",
-			},
-			false,
-		},
-		{
-			"number INF",
-			args{
-				value: "n:INF °F",
-			},
-			HaystackTypeNumber,
-			&HaystackNumber{
-				Unit:  "°F",
-				Value: float32(math.Inf(1)),
-			},
-			false,
-		},
-		{
-			"number -INF",
-			args{
-				value: "n:-INF °F",
-			},
-			HaystackTypeNumber,
-			&HaystackNumber{
-				Unit:  "°F",
-				Value: float32(math.Inf(-1)),
-			},
-			false,
-		},
-		{
-			"number with unit",
-			args{
-				value: "n:1234 °F",
-			},
-			HaystackTypeNumber,
-			&HaystackNumber{
-				Unit:  "°F",
-				Value: 1234,
-			},
-			false,
-		},
-		{
-			"number without unit",
-			args{
-				value: "n:1234",
-			},
-			HaystackTypeNumber,
-			&HaystackNumber{
-				Unit:  "",
-				Value: 1234,
-			},
-			false,
-		},
-
-		{
-			"number bad format",
-			args{
-				value: "n:abc",
-			},
-			HaystackTypeUndefined,
-			nil,
-			true,
-		},
-		{
-			"marker",
-			args{
-				value: "m:",
-			},
-			HaystackTypeMarker,
-			true,
-			false,
-		},
-		{
-			"String 1",
-			args{
-				value: "s:blabla",
-			},
-			HaystackTypeStr,
-			"blabla",
-			false,
-		},
-		{
-			"String 2",
-			args{
-				value: "blabla",
-			},
-			HaystackTypeStr,
-			"blabla",
-			false,
-		},
-		{
-			"Reference",
-			args{
-				value: "r:blabla",
-			},
-			HaystackTypeRef,
-			"blabla",
-			false,
-		},
-		{
-			"Boolean",
-			args{
-				value: true,
-			},
-			HaystackTypeBool,
-			true,
-			false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			typ, val, err := inferType(tt.args.value)
-			if typ != tt.want {
-				t.Errorf("inferType() got = %v, want %v", typ, tt.want)
+			v := &Value{
+				kind:   tt.fields.kind,
+				str:    tt.fields.str,
+				number: tt.fields.number,
+				t:      tt.fields.t,
+				u:      tt.fields.u,
+				ref:    tt.fields.ref,
+				g:      tt.fields.g,
+				coord:  tt.fields.coord,
 			}
-			if typ == HaystackTypeDateTime {
-				if !val.(time.Time).Equal(tt.want1.(time.Time)) {
-					t.Errorf("inferType() time error got1 = %v, want %v", val, tt.want1)
-				}
-			} else {
-				if !reflect.DeepEqual(val, tt.want1) {
-					t.Errorf("inferType() got1 = %v, want %v", val, tt.want1)
-				}
+			got, err := v.MarshalJSON()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Value.MarshalJSON() error = %v, wantErr %v", err, tt.wantErr)
+				return
 			}
-			if err == nil && tt.wantErr {
-				t.Fail()
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Value.MarshalJSON() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestTag_Equal(t *testing.T) {
+func TestValue_GetString(t *testing.T) {
+	testStr := "testStr"
 	type fields struct {
-		Kind  Kind
-		Value interface{}
+		kind   kind
+		str    *string
+		number struct {
+			value float32
+			unit  string
+		}
+		t     *time.Time
+		u     *url.URL
+		ref   *HaystackID
+		g     *Grid
+		coord struct {
+			long float32
+			lat  float32
+		}
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		want    string
+		wantErr bool
+	}{
+		{
+			"string",
+			fields{
+				kind: haystackTypeStr,
+				str:  &testStr,
+			},
+			testStr,
+			false,
+		},
+		{
+			"no string",
+			fields{
+				kind: haystackLastType,
+				str:  &testStr,
+			},
+			"",
+			true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			v := &Value{
+				kind:   tt.fields.kind,
+				str:    tt.fields.str,
+				number: tt.fields.number,
+				t:      tt.fields.t,
+				u:      tt.fields.u,
+				ref:    tt.fields.ref,
+				g:      tt.fields.g,
+				coord:  tt.fields.coord,
+			}
+			got, err := v.GetString()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Value.GetString() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("Value.GetString() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestValue_UnmarshalJSON(t *testing.T) {
+	type fields struct {
+		kind   kind
+		str    *string
+		number struct {
+			value float32
+			unit  string
+		}
+		t     *time.Time
+		u     *url.URL
+		ref   *HaystackID
+		g     *Grid
+		coord struct {
+			long float32
+			lat  float32
+		}
 	}
 	type args struct {
-		tv2 *Tag
+		b []byte
 	}
 	tests := []struct {
-		name   string
-		fields fields
-		args   args
-		want   bool
+		name    string
+		fields  fields
+		args    args
+		wantErr bool
 	}{
 		{
-			"different types",
-			fields{
-				HaystackLastType,
-				"b",
-			},
+			"nil value",
+			fields{},
 			args{
-				&Tag{
-					Kind:  HaystackTypeStr,
-					Value: "b",
-				},
-			},
-			false,
-		},
-		{
-			"Nil value",
-			fields{
-				Value: nil,
-				Kind:  HaystackTypeUndefined,
-			},
-			args{
-				&Tag{
-					Kind:  HaystackTypeStr,
-					Value: "b",
-				},
-			},
-			false,
-		},
-		{
-			"Nil value equal",
-			fields{
-				Value: nil,
-				Kind:  HaystackTypeUndefined,
-			},
-			args{
-				&Tag{
-					Kind:  HaystackTypeStr,
-					Value: nil,
-				},
+				nil,
 			},
 			true,
 		},
 		{
-			"Nil arg",
-			fields{
-				Value: nil,
-				Kind:  HaystackTypeUndefined,
+			"empty value",
+			fields{},
+			args{
+				[]byte(``),
 			},
-			args{nil},
-			false,
+			true,
 		},
+		/*
+			{
+				"string",
+				fields{},
+				args{
+					[]byte(`"s:blabla"`),
+				},
+				false,
+			},
+		*/
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tv := &Tag{
-				Kind:  tt.fields.Kind,
-				Value: tt.fields.Value,
+			v := &Value{
+				kind:   tt.fields.kind,
+				str:    tt.fields.str,
+				number: tt.fields.number,
+				t:      tt.fields.t,
+				u:      tt.fields.u,
+				ref:    tt.fields.ref,
+				g:      tt.fields.g,
+				coord:  tt.fields.coord,
 			}
-			if got := tv.Equal(tt.args.tv2); got != tt.want {
-				t.Errorf("Tag.Equal() = %v, want %v", got, tt.want)
+			if err := v.UnmarshalJSON(tt.args.b); (err != nil) != tt.wantErr {
+				t.Errorf("Value.UnmarshalJSON() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
-
 }
 
-func TestNewTag_wrong(t *testing.T) {
-	tv := NewTag(HaystackLastType+1, true)
-	if tv.Kind != HaystackTypeUndefined {
-		t.Fail()
-	}
-}
-
-func TestTag_Hash(t *testing.T) {
-	type fields struct {
-		Kind  Kind
-		Value interface{}
+func TestNewRef(t *testing.T) {
+	id := NewHaystackID("myid")
+	type args struct {
+		r *HaystackID
 	}
 	tests := []struct {
-		name   string
-		fields fields
-		want   string
+		name string
+		args args
+		want *Value
 	}{
 		{
-			"simple test",
-			fields{
-				HaystackLastType,
-				"dummy",
+			"ref",
+			args{
+				id,
 			},
-			fmt.Sprintf("%v/dummy", HaystackLastType),
+			&Value{
+				kind: haystackTypeRef,
+				ref:  id,
+			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tv := &Tag{
-				Kind:  tt.fields.Kind,
-				Value: tt.fields.Value,
-			}
-			if got := tv.Hash(); got != tt.want {
-				t.Errorf("Tag.Hash() = %v, want %v", got, tt.want)
+			if got := NewRef(tt.args.r); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewRef() = %v, want %v", got, tt.want)
 			}
 		})
 	}
