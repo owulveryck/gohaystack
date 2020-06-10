@@ -3,10 +3,42 @@ package gohaystack
 import (
 	"errors"
 	"net/url"
+	"strconv"
 	"time"
 )
 
 type kind int
+
+// Unit represents a unit is a number
+type Unit *string
+
+// NewUnit returns a new unit
+func NewUnit(u string) Unit {
+	return &u
+}
+
+// NewNumber ...
+func NewNumber(value float32, unit Unit) *Value {
+	return &Value{
+		kind: haystackTypeNumber,
+		number: struct {
+			value float32
+			unit  Unit
+		}{
+			value,
+			unit,
+		},
+	}
+}
+
+// NewURL ...
+func NewURL(u *url.URL) *Value {
+	return &Value{
+		kind: haystackTypeURI,
+		u:    u,
+	}
+
+}
 
 // Value is an haystack value
 type Value struct {
@@ -14,7 +46,7 @@ type Value struct {
 	str    *string
 	number struct {
 		value float32
-		unit  string
+		unit  Unit
 	}
 	t     *time.Time
 	u     *url.URL
@@ -48,6 +80,12 @@ func (v *Value) MarshalJSON() ([]byte, error) {
 		output = `"m:"`
 	case haystackTypeURI:
 		output = `"u:` + (*v.u).String() + `"`
+	case haystackTypeNumber:
+		var unit string
+		if v.number.unit != nil {
+			unit = ` ` + *v.number.unit
+		}
+		output = `"n:` + strconv.FormatFloat(float64(v.number.value), 'f', -1, 32) + unit + `"`
 	default:
 		return nil, errors.New("type not handled")
 	}
