@@ -31,13 +31,22 @@ func (g *Grid) MarshalJSON() ([]byte, error) {
 	}
 	carrier := haystackJSONStructure{}
 	carrier.Meta = g.Meta
-	carrier.Cols = make([]haystackJSONCol, len(g.labels))
-	carrier.Rows = make([]map[string]*Value, len(g.entities))
-	for i := range g.labels {
-		carrier.Cols[i] = haystackJSONCol{
-			Name: g.labels[i].Value,
-			Dis:  g.labels[i].Display,
+	labels := make(map[*Label]struct{}, 0)
+	for _, entity := range g.entities {
+		for label := range entity.tags {
+			labels[label] = struct{}{}
 		}
+	}
+	carrier.Cols = make([]haystackJSONCol, len(labels))
+
+	carrier.Rows = make([]map[string]*Value, len(g.entities))
+	i := 0
+	for label := range labels {
+		carrier.Cols[i] = haystackJSONCol{
+			Name: label.Value,
+			Dis:  label.Display,
+		}
+		i++
 	}
 	for i, entity := range g.entities {
 		carrier.Rows[i] = make(map[string]*Value, len(entity.tags)+1) // all tags + id

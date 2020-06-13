@@ -13,3 +13,6 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+sandbox/main_test.go
+sandbox/main.go
+sandbox/main.go_

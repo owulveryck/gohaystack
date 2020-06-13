@@ -1,9 +1,13 @@
 package gohaystack
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
+	"fmt"
 	"net/url"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -48,7 +52,8 @@ type Value struct {
 		value float32
 		unit  Unit
 	}
-	t     *time.Time
+	b     bool
+	t     time.Time
 	u     *url.URL
 	ref   *HaystackID
 	g     *Grid
@@ -63,7 +68,35 @@ func (v *Value) UnmarshalJSON(b []byte) error {
 	if b == nil || len(b) == 0 {
 		return errors.New("Cannot unmarshal nil or empty value")
 	}
-
+	rdr := bytes.NewReader(b)
+	var err error
+	var kind rune
+	var content strings.Builder
+	var current rune
+	for i := 0; err == nil; i++ {
+		var char rune
+		char, _, err = rdr.ReadRune()
+		if i == 0 && char != rune('"') {
+			return errors.New("Expected a string")
+		}
+		if i == 1 {
+			kind = char
+		}
+		if i == 2 && char != rune(':') {
+			return errors.New("Expected a string")
+		}
+		if i > 2 {
+			_, err := content.WriteRune(char)
+			if err != nil {
+				return err
+			}
+		}
+		current = char
+	}
+	if current != rune('"') {
+		return errors.New("Unterminated string")
+	}
+	_ = kind
 	return errors.New("Unable to unmarshal value " + string(b))
 }
 
@@ -72,12 +105,28 @@ func (v *Value) UnmarshalJSON(b []byte) error {
 func (v *Value) MarshalJSON() ([]byte, error) {
 	var output string
 	switch v.kind {
+	case haystackTypeBool:
+		output = fmt.Sprintf("%v", v.b)
+	case haystackTypeGrid:
+		return json.Marshal(v.g)
 	case haystackTypeStr:
 		output = `"s:` + *v.str + `"`
 	case haystackTypeRef:
 		output = `"r:` + string(*v.ref) + `"`
+	case haystackTypeRemove:
+		output = `"-:"`
 	case haystackTypeMarker:
 		output = `"m:"`
+	case haystackTypeNA:
+		output = `"z:"`
+	case haystackTypeCoord:
+		output = fmt.Sprintf(`"c:%v,%v"`, v.coord.lat, v.coord.long)
+	case haystackTypeDate:
+		output = `"d:` + v.t.Format("2006-01-02") + `"`
+	case haystackTypeTime:
+		output = `"h:` + v.t.Format("15:04:05") + `"`
+	case haystackTypeDateTime:
+		output = `"t:` + v.t.Format(time.RFC3339) + `"`
 	case haystackTypeURI:
 		output = `"u:` + (*v.u).String() + `"`
 	case haystackTypeNumber:

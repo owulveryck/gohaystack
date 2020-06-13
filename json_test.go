@@ -40,7 +40,6 @@ func TestGrid_UnmarshalJSON(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			g := &Grid{
 				Meta:     tt.fields.Meta,
-				labels:   tt.fields.labels,
 				entities: tt.fields.entities,
 			}
 			if err := g.UnmarshalJSON(tt.args.b); (err != nil) != tt.wantErr {
@@ -115,12 +114,13 @@ func TestGrid_MarshalJSON(t *testing.T) {
 					{
 						id: myid,
 						tags: map[*Label]*Value{
+							siteLabel:   MarkerValue,
 							blablaLabel: blablaValue,
 						},
 					},
 				},
 			},
-			[]byte(`{"meta":{"ver":"3.0"}, "cols":[{"name":"site"},{"name":"blabla"}],"rows":[{"id":"r:myid","blabla":"s:blabla"}]}`),
+			[]byte(`{"meta":{"ver":"3.0"}, "cols":[{"name":"site"},{"name":"blabla"}],"rows":[{"id":"r:myid","blabla":"s:blabla","site":"m:"}]}`),
 			false,
 		},
 		{
@@ -129,17 +129,32 @@ func TestGrid_MarshalJSON(t *testing.T) {
 				Meta: map[string]string{
 					"ver": "3.0",
 				},
-				labels: []*Label{siteLabel, blablaLabelWithDis},
 				entities: []*Entity{
 					{
 						id: myid,
 						tags: map[*Label]*Value{
-							blablaLabel: blablaValue,
+							blablaLabelWithDis: blablaValue,
 						},
 					},
 				},
 			},
-			[]byte(`{"meta":{"ver":"3.0"}, "cols":[{"name":"site"},{"name":"blabla","dis":"blabla display"}],"rows":[{"id":"r:myid","blabla":"s:blabla"}]}`),
+			[]byte(`{
+				"meta":{
+				   "ver":"3.0"
+				},
+				"cols":[
+				   {
+					  "name":"blabla",
+					  "dis": "blabla display"
+				   }
+				],
+				"rows":[
+				   {
+					  "blabla":"s:blabla",
+					  "id":"r:myid"
+				   }
+				]
+			 }`),
 			false,
 		},
 	}
@@ -147,7 +162,6 @@ func TestGrid_MarshalJSON(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			g := &Grid{
 				Meta:     tt.fields.Meta,
-				labels:   tt.fields.labels,
 				entities: tt.fields.entities,
 			}
 			got, err := g.MarshalJSON()
@@ -156,7 +170,18 @@ func TestGrid_MarshalJSON(t *testing.T) {
 				return
 			}
 			if !tt.wantErr {
-				var a, b map[string]interface{}
+
+				type haystackJSONCol struct {
+					Name string `json:"name"`
+					Dis  string `json:"dis,omitempty"`
+				}
+				type haystackJSONStructure struct {
+					Meta map[string]string   `json:"meta"`
+					Cols []haystackJSONCol   `json:"cols"`
+					Rows []map[string]string `json:"rows"`
+				}
+
+				var a, b haystackJSONStructure
 				err = json.Unmarshal(tt.want, &a)
 				if err != nil {
 					t.Fatal(err)
@@ -165,9 +190,16 @@ func TestGrid_MarshalJSON(t *testing.T) {
 				if err != nil {
 					t.Fatal(err)
 				}
-				if !reflect.DeepEqual(a, b) {
-					t.Errorf("Grid.MarshalJSON() = %v, want %v", a, b)
+				if !reflect.DeepEqual(a.Meta, b.Meta) {
+					t.Errorf("Grid.MarshalJSON() = %v, want %v", b, a)
 				}
+				if !reflect.DeepEqual(a.Rows, b.Rows) {
+					t.Errorf("Grid.MarshalJSON() = %v, want %v", b, a)
+				}
+				if !reflect.DeepEqual(a.Cols, b.Cols) {
+					t.Errorf("Grid.MarshalJSON() = %v, want %v", b.Cols, a.Cols)
+				}
+
 			}
 		})
 	}

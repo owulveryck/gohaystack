@@ -20,7 +20,8 @@ func TestValue_MarshalJSON(t *testing.T) {
 			value float32
 			unit  Unit
 		}
-		t     *time.Time
+		b     bool
+		t     time.Time
 		u     *url.URL
 		ref   *HaystackID
 		g     *Grid
@@ -100,6 +101,82 @@ func TestValue_MarshalJSON(t *testing.T) {
 			false,
 		},
 		{
+			"boolean",
+			fields{
+				kind: haystackTypeBool,
+				b:    true,
+			},
+			[]byte(`true`),
+			false,
+		},
+		{
+			"coord",
+			fields{
+				kind: haystackTypeCoord,
+				coord: struct {
+					long float32
+					lat  float32
+				}{
+					lat:  37.545,
+					long: -77.449,
+				},
+			},
+			[]byte(`"c:37.545,-77.449"`),
+			false,
+		},
+		{
+			"date",
+			fields{
+				kind: haystackTypeDate,
+				t:    time.Date(2009, time.November, 10, 23, 0, 0, 0, time.UTC),
+			},
+			[]byte(`"d:2009-11-10"`),
+			false,
+		},
+		{
+			"time",
+			fields{
+				kind: haystackTypeTime,
+				t:    time.Date(2009, time.November, 10, 23, 01, 02, 0, time.UTC),
+			},
+			[]byte(`"h:23:01:02"`),
+			false,
+		},
+		{
+			"date time",
+			fields{
+				kind: haystackTypeDateTime,
+				t:    time.Date(2009, time.November, 10, 23, 01, 02, 0, time.UTC),
+			},
+			[]byte(`"t:2009-11-10T23:01:02Z"`),
+			false,
+		},
+		{
+			"remove",
+			fields{
+				kind: haystackTypeRemove,
+			},
+			[]byte(`"-:"`),
+			false,
+		},
+		{
+			"grid",
+			fields{
+				kind: haystackTypeGrid,
+				g:    NewGrid(),
+			},
+			[]byte(`{"meta":{"Ver":"3.0"},"cols":[],"rows":[]}`),
+			false,
+		},
+		{
+			"na",
+			fields{
+				kind: haystackTypeNA,
+			},
+			[]byte(`"z:"`),
+			false,
+		},
+		{
 			"Unhandled",
 			fields{
 				kind: haystackLastType,
@@ -114,6 +191,7 @@ func TestValue_MarshalJSON(t *testing.T) {
 				kind:   tt.fields.kind,
 				str:    tt.fields.str,
 				number: tt.fields.number,
+				b:      tt.fields.b,
 				t:      tt.fields.t,
 				u:      tt.fields.u,
 				ref:    tt.fields.ref,
@@ -141,7 +219,8 @@ func TestValue_GetString(t *testing.T) {
 			value float32
 			unit  Unit
 		}
-		t     *time.Time
+		b     bool
+		t     time.Time
 		u     *url.URL
 		ref   *HaystackID
 		g     *Grid
@@ -181,6 +260,7 @@ func TestValue_GetString(t *testing.T) {
 				kind:   tt.fields.kind,
 				str:    tt.fields.str,
 				number: tt.fields.number,
+				b:      tt.fields.b,
 				t:      tt.fields.t,
 				u:      tt.fields.u,
 				ref:    tt.fields.ref,
@@ -207,7 +287,8 @@ func TestValue_UnmarshalJSON(t *testing.T) {
 			value float32
 			unit  Unit
 		}
-		t     *time.Time
+		b     bool
+		t     time.Time
 		u     *url.URL
 		ref   *HaystackID
 		g     *Grid
@@ -241,16 +322,14 @@ func TestValue_UnmarshalJSON(t *testing.T) {
 			},
 			true,
 		},
-		/*
-			{
-				"string",
-				fields{},
-				args{
-					[]byte(`"s:blabla"`),
-				},
-				false,
+		{
+			"string",
+			fields{},
+			args{
+				[]byte(`"s:blabla"`),
 			},
-		*/
+			false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -258,6 +337,7 @@ func TestValue_UnmarshalJSON(t *testing.T) {
 				kind:   tt.fields.kind,
 				str:    tt.fields.str,
 				number: tt.fields.number,
+				b:      tt.fields.b,
 				t:      tt.fields.t,
 				u:      tt.fields.u,
 				ref:    tt.fields.ref,

@@ -1,13 +1,8 @@
 package gohaystack
 
-import (
-	"errors"
-)
-
 // Grid is a simple database structure, column based
 type Grid struct {
 	Meta     map[string]string
-	labels   []*Label // All the tags used in the grid accrodd various entities
 	entities []*Entity
 }
 
@@ -17,7 +12,6 @@ func NewGrid() *Grid {
 		Meta: map[string]string{
 			"Ver": "3.0",
 		},
-		labels:   make([]*Label, 0),
 		entities: make([]*Entity, 0),
 	}
 }
@@ -59,19 +53,4 @@ func (g *Grid) NewEntity(id *HaystackID) *Entity {
 	}
 	g.entities = append(g.entities, entity)
 	return entity
-}
-
-// AddLabel to the grid; returns nil
-// TODO: returns an error if the label already exits
-func (g *Grid) AddLabel(l *Label) error {
-	if l == nil {
-		return errors.New("Cannot add nil label")
-	}
-	g.labels = append(g.labels, l)
-	return nil
-}
-
-// GetLabels used in the grid
-func (g *Grid) GetLabels() []*Label {
-	return g.labels
 }
