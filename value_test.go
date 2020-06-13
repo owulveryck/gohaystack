@@ -8,6 +8,8 @@ import (
 )
 
 func TestValue_MarshalJSON(t *testing.T) {
+	abc := "abc"
+	def := "def"
 	simpleTestStr := "test"
 	id := NewHaystackID("id")
 	u, _ := url.Parse("https://example.com")
@@ -20,6 +22,8 @@ func TestValue_MarshalJSON(t *testing.T) {
 			value float32
 			unit  Unit
 		}
+		dict  map[string]*Value
+		list  []*Value
 		b     bool
 		t     time.Time
 		u     *url.URL
@@ -110,6 +114,38 @@ func TestValue_MarshalJSON(t *testing.T) {
 			false,
 		},
 		{
+			"list",
+			fields{
+				kind: haystackTypeList,
+				list: []*Value{
+					{
+						kind: haystackTypeStr,
+						str:  &abc,
+					},
+					{
+						kind: haystackTypeStr,
+						str:  &def,
+					},
+				},
+			},
+			[]byte(`["s:abc","s:def"]`),
+			false,
+		},
+		{
+			"dict",
+			fields{
+				kind: haystackTypeDict,
+				dict: map[string]*Value{
+					"a": {
+						kind: haystackTypeStr,
+						str:  &abc,
+					},
+				},
+			},
+			[]byte(`{"a":"s:abc"}`),
+			false,
+		},
+		{
 			"coord",
 			fields{
 				kind: haystackTypeCoord,
@@ -190,6 +226,8 @@ func TestValue_MarshalJSON(t *testing.T) {
 			v := &Value{
 				kind:   tt.fields.kind,
 				str:    tt.fields.str,
+				dict:   tt.fields.dict,
+				list:   tt.fields.list,
 				number: tt.fields.number,
 				b:      tt.fields.b,
 				t:      tt.fields.t,
@@ -219,6 +257,8 @@ func TestValue_GetString(t *testing.T) {
 			value float32
 			unit  Unit
 		}
+		dict  map[string]*Value
+		list  []*Value
 		b     bool
 		t     time.Time
 		u     *url.URL
@@ -260,6 +300,8 @@ func TestValue_GetString(t *testing.T) {
 				kind:   tt.fields.kind,
 				str:    tt.fields.str,
 				number: tt.fields.number,
+				dict:   tt.fields.dict,
+				list:   tt.fields.list,
 				b:      tt.fields.b,
 				t:      tt.fields.t,
 				u:      tt.fields.u,
@@ -280,6 +322,7 @@ func TestValue_GetString(t *testing.T) {
 }
 
 func TestValue_UnmarshalJSON(t *testing.T) {
+	blabla := "blabla"
 	type fields struct {
 		kind   kind
 		str    *string
@@ -287,6 +330,8 @@ func TestValue_UnmarshalJSON(t *testing.T) {
 			value float32
 			unit  Unit
 		}
+		dict  map[string]*Value
+		list  []*Value
 		b     bool
 		t     time.Time
 		u     *url.URL
@@ -324,7 +369,10 @@ func TestValue_UnmarshalJSON(t *testing.T) {
 		},
 		{
 			"string",
-			fields{},
+			fields{
+				kind: haystackTypeStr,
+				str:  &blabla,
+			},
 			args{
 				[]byte(`"s:blabla"`),
 			},
@@ -336,6 +384,8 @@ func TestValue_UnmarshalJSON(t *testing.T) {
 			v := &Value{
 				kind:   tt.fields.kind,
 				str:    tt.fields.str,
+				dict:   tt.fields.dict,
+				list:   tt.fields.list,
 				number: tt.fields.number,
 				b:      tt.fields.b,
 				t:      tt.fields.t,

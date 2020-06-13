@@ -1,13 +1,11 @@
 package gohaystack
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"net/url"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -57,6 +55,8 @@ type Value struct {
 	u     *url.URL
 	ref   *HaystackID
 	g     *Grid
+	dict  map[string]*Value
+	list  []*Value
 	coord struct {
 		long float32
 		lat  float32
@@ -68,35 +68,6 @@ func (v *Value) UnmarshalJSON(b []byte) error {
 	if b == nil || len(b) == 0 {
 		return errors.New("Cannot unmarshal nil or empty value")
 	}
-	rdr := bytes.NewReader(b)
-	var err error
-	var kind rune
-	var content strings.Builder
-	var current rune
-	for i := 0; err == nil; i++ {
-		var char rune
-		char, _, err = rdr.ReadRune()
-		if i == 0 && char != rune('"') {
-			return errors.New("Expected a string")
-		}
-		if i == 1 {
-			kind = char
-		}
-		if i == 2 && char != rune(':') {
-			return errors.New("Expected a string")
-		}
-		if i > 2 {
-			_, err := content.WriteRune(char)
-			if err != nil {
-				return err
-			}
-		}
-		current = char
-	}
-	if current != rune('"') {
-		return errors.New("Unterminated string")
-	}
-	_ = kind
 	return errors.New("Unable to unmarshal value " + string(b))
 }
 
@@ -107,6 +78,10 @@ func (v *Value) MarshalJSON() ([]byte, error) {
 	switch v.kind {
 	case haystackTypeBool:
 		output = fmt.Sprintf("%v", v.b)
+	case haystackTypeDict:
+		return json.Marshal(v.dict)
+	case haystackTypeList:
+		return json.Marshal(v.list)
 	case haystackTypeGrid:
 		return json.Marshal(v.g)
 	case haystackTypeStr:

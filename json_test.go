@@ -196,6 +196,8 @@ func TestGrid_MarshalJSON(t *testing.T) {
 				if !reflect.DeepEqual(a.Rows, b.Rows) {
 					t.Errorf("Grid.MarshalJSON() = %v, want %v", b, a)
 				}
+				//sort.Sort(labelsByAlphabeticalOrder(a.Cols))
+				//sort.Sort(labelsByAlphabeticalOrder(b.Cols))
 				if !reflect.DeepEqual(a.Cols, b.Cols) {
 					t.Errorf("Grid.MarshalJSON() = %v, want %v", b.Cols, a.Cols)
 				}
@@ -204,3 +206,9 @@ func TestGrid_MarshalJSON(t *testing.T) {
 		})
 	}
 }
+
+type labelsByAlphabeticalOrder []haystackJSONCol
+
+func (a labelsByAlphabeticalOrder) Len() int           { return len(a) }
+func (a labelsByAlphabeticalOrder) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a labelsByAlphabeticalOrder) Less(i, j int) bool { return a[i].Name < a[j].Name }
