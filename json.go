@@ -8,7 +8,37 @@ import (
 // UnmarshalJSON turns a JSON encoded grid into a Grid object
 func (g *Grid) UnmarshalJSON(b []byte) error {
 	var temp haystackJSONStructure
-	return json.Unmarshal(b, &temp)
+	err := json.Unmarshal(b, &temp)
+	if err != nil {
+		return err
+	}
+	// find all labels
+	labels := make([]*Label, len(temp.Cols))
+	for i, v := range temp.Cols {
+		labels[i] = &Label{
+			Value:   v.Name,
+			Display: v.Dis,
+		}
+	}
+
+	var hasVer bool
+	var version string
+	if v, ok := temp.Meta["Ver"]; ok {
+		hasVer = true
+		version = v
+	}
+	if v, ok := temp.Meta["ver"]; ok {
+		hasVer = true
+		version = v
+	}
+	if !hasVer {
+		return errors.New("missing version tag")
+	}
+	if version != "3.0" {
+		return errors.New("Unsupported version " + version)
+	}
+	g.Meta = temp.Meta
+	return nil
 }
 
 // MarshalJSON in haystack compatible format

@@ -68,7 +68,11 @@ func (v *Value) UnmarshalJSON(b []byte) error {
 	if b == nil || len(b) == 0 {
 		return errors.New("Cannot unmarshal nil or empty value")
 	}
-	return errors.New("Unable to unmarshal value " + string(b))
+	v.kind = haystackTypeUndefined
+	val := string(b)
+	v.str = &val
+	return nil
+	//return errors.New("Unable to unmarshal value " + string(b))
 }
 
 // MarshalJSON encode the value in format compatible with haystack's JSON:
