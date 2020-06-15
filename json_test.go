@@ -55,7 +55,48 @@ func TestGrid_UnmarshalJSON(t *testing.T) {
 			true,
 		},
 		{
-			"simple",
+			"missing id",
+			fields{},
+			args{
+				[]byte(`{"meta":{"ver":"3.0"}, "cols":[{"name":"blabla"}],"rows":[{"idd":"r:myid","blabla":"s:blabla"}]}`),
+			},
+			true,
+		},
+		{
+			"id is not ref",
+			fields{},
+			args{
+				[]byte(`{"meta":{"ver":"3.0"}, "cols":[{"name":"blabla"}],"rows":[{"id":"s:myid","blabla":"s:blabla"}]}`),
+			},
+			true,
+		},
+		{
+			"id ok",
+			fields{
+				Meta: map[string]string{
+					"ver": "3.0",
+				},
+				entities: []*Entity{
+					&Entity{
+						id: NewHaystackID("myid"),
+						/*
+							tags: map[*Label]*Value{
+								&Label{Value: "blabla"}: &Value{
+									kind: haystackTypeStr,
+									str:  &blabla,
+								},
+							},
+						*/
+					},
+				},
+			},
+			args{
+				[]byte(`{"meta":{"ver":"3.0"}, "cols":[],"rows":[{"id":"r:myid"}]}`),
+			},
+			false,
+		},
+		{
+			"id ok and one entity",
 			fields{
 				Meta: map[string]string{
 					"ver": "3.0",
@@ -73,24 +114,55 @@ func TestGrid_UnmarshalJSON(t *testing.T) {
 				},
 			},
 			args{
-				[]byte(`{"meta":{"ver":"3.0"}, "cols":[{"name":"blabla"}],"rows":[{"id":"r:myid","blabla":"s:blabla"}]}`),
+				[]byte(`{"meta":{"ver":"3.0"}, "cols":[{"name": "blabla"}],"rows":[{"id":"r:myid","blabla":"blabla"}]}`),
 			},
 			false,
 		},
+		{
+			"Undeclared label",
+			fields{},
+			args{
+				[]byte(`{"meta":{"ver":"3.0"}, "cols":[{"name": "blablabla"}],"rows":[{"id":"r:myid","blabla":"blabla"}]}`),
+			},
+			true,
+		},
 		/*
 			{
-				"sample",
+				"simple",
 				fields{
 					Meta: map[string]string{
 						"ver": "3.0",
 					},
-					//entities: make([]*Entity, 0),
+					entities: []*Entity{
+						&Entity{
+							id: NewHaystackID("myid"),
+							tags: map[*Label]*Value{
+								&Label{Value: "blabla"}: &Value{
+									kind: haystackTypeStr,
+									str:  &blabla,
+								},
+							},
+						},
+					},
 				},
 				args{
-					samplePayload,
+					[]byte(`{"meta":{"ver":"3.0"}, "cols":[{"name":"blabla"}],"rows":[{"id":"r:myid","blabla":"s:blabla"}]}`),
 				},
 				false,
 			},
+				{
+					"sample",
+					fields{
+						Meta: map[string]string{
+							"ver": "3.0",
+						},
+						//entities: make([]*Entity, 0),
+					},
+					args{
+						samplePayload,
+					},
+					false,
+				},
 		*/
 	}
 	for _, tt := range tests {
@@ -106,7 +178,30 @@ func TestGrid_UnmarshalJSON(t *testing.T) {
 			if !reflect.DeepEqual(g.Meta, gg.Meta) {
 				t.Errorf("Grid.UnmarshalJSON() = %v, want %v", gg.Meta, g.Meta)
 			}
-			// TODO: create test for entities
+			if len(g.entities) != len(gg.entities) {
+				t.Errorf("Grid.UnmarshalJSON() = found %v entities, want %v", len(gg.entities), len(g.entities))
+			}
+			for i := 0; i < len(g.entities); i++ {
+				gentity := g.entities[i]
+				ggentity := gg.entities[i]
+				if *gentity.id != *ggentity.id {
+					t.Errorf("Grid.UnmarshalJSON() = bad id %v, want %v", gentity.id, ggentity.id)
+
+				}
+				if len(gentity.tags) != len(ggentity.tags) {
+					t.Errorf("Grid.UnmarshalJSON() = found %v tags, want %v", len(ggentity.tags), len(gentity.tags))
+				}
+				for k, v := range ggentity.tags {
+					var vv *Value
+					var ok bool
+					if vv, ok = ggentity.tags[k]; !ok {
+						t.Errorf("Grid.UnmarshalJSON() = expected tag %v not found", k)
+					}
+					if !reflect.DeepEqual(v, vv) {
+						t.Errorf("Grid.UnmarshalJSON() = bad vallue for tag %v found %v tags, want %v", k, v, vv)
+					}
+				}
+			}
 		})
 	}
 }

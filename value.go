@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
+	"regexp"
 	"strconv"
 	"time"
 )
@@ -63,16 +64,45 @@ type Value struct {
 	}
 }
 
+func (v *Value) unmarshalJSONNotString(b []byte) error {
+	return errors.New("not implemented")
+}
+
+func (v *Value) unmarshalJSONString(b []byte) error {
+	re := regexp.MustCompile(`^(([srmu]):)?(.*)$`)
+	res := re.FindStringSubmatch(string(b))
+	switch res[2] {
+	case ``:
+		v.kind = haystackTypeStr
+		val := res[3]
+		v.str = &val
+		return nil
+	case `s`:
+		v.kind = haystackTypeStr
+		val := res[3]
+		v.str = &val
+		return nil
+	case `r`:
+		v.kind = haystackTypeRef
+		val := res[3]
+		id := HaystackID(val)
+		v.ref = &id
+		return nil
+	default:
+		return errors.New("not implemented")
+	}
+}
+
 // UnmarshalJSON extract a value from b
 func (v *Value) UnmarshalJSON(b []byte) error {
 	if b == nil || len(b) == 0 {
 		return errors.New("Cannot unmarshal nil or empty value")
 	}
-	v.kind = haystackTypeUndefined
-	val := string(b)
-	v.str = &val
-	return nil
-	//return errors.New("Unable to unmarshal value " + string(b))
+	// is it a string
+	if isValidString(b) {
+		return v.unmarshalJSONString(trimDoubleQuote(b))
+	}
+	return v.unmarshalJSONNotString(b)
 }
 
 // MarshalJSON encode the value in format compatible with haystack's JSON:

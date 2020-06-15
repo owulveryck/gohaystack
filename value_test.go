@@ -499,3 +499,96 @@ func TestNewURL(t *testing.T) {
 		})
 	}
 }
+
+func TestValue_unmarshalJSONString(t *testing.T) {
+	type fields struct {
+		kind   kind
+		str    *string
+		number struct {
+			value float32
+			unit  Unit
+		}
+		b     bool
+		t     time.Time
+		u     *url.URL
+		ref   *HaystackID
+		g     *Grid
+		dict  map[string]*Value
+		list  []*Value
+		coord struct {
+			long float32
+			lat  float32
+		}
+	}
+	type args struct {
+		b []byte
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		wantErr bool
+	}{
+		{
+			"string without marker",
+			fields{},
+			args{
+				[]byte(`bladibla`),
+			},
+			false,
+		},
+		{
+			"string with marker",
+			fields{},
+			args{
+				[]byte(`s:bladibla`),
+			},
+			false,
+		},
+		{
+			"string with marker",
+			fields{},
+			args{
+				[]byte(`s:bladibla blabla`),
+			},
+			false,
+		},
+		{
+			"string with marker",
+			fields{},
+			args{
+				[]byte(`blablas:bladibla blabla`),
+			},
+			false,
+		},
+		{
+			"reference",
+			fields{},
+			args{
+				[]byte(`r:bladibla`),
+			},
+			false,
+		},
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			v := &Value{
+				kind:   tt.fields.kind,
+				str:    tt.fields.str,
+				number: tt.fields.number,
+				b:      tt.fields.b,
+				t:      tt.fields.t,
+				u:      tt.fields.u,
+				ref:    tt.fields.ref,
+				g:      tt.fields.g,
+				dict:   tt.fields.dict,
+				list:   tt.fields.list,
+				coord:  tt.fields.coord,
+			}
+			if err := v.unmarshalJSONString(tt.args.b); (err != nil) != tt.wantErr {
+				t.Errorf("Value.unmarshalJSONString() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}

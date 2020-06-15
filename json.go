@@ -3,6 +3,7 @@ package gohaystack
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 )
 
 // UnmarshalJSON turns a JSON encoded grid into a Grid object
@@ -13,9 +14,9 @@ func (g *Grid) UnmarshalJSON(b []byte) error {
 		return err
 	}
 	// find all labels
-	labels := make([]*Label, len(temp.Cols))
-	for i, v := range temp.Cols {
-		labels[i] = &Label{
+	labels := make(map[string]*Label, len(temp.Cols))
+	for _, v := range temp.Cols {
+		labels[v.Name] = &Label{
 			Value:   v.Name,
 			Display: v.Dis,
 		}
@@ -37,7 +38,33 @@ func (g *Grid) UnmarshalJSON(b []byte) error {
 	if version != "3.0" {
 		return errors.New("Unsupported version " + version)
 	}
+	entities := make([]*Entity, 0)
+	for _, e := range temp.Rows {
+		entity := &Entity{
+			tags: make(map[*Label]*Value, len(e)-1),
+		}
+		if id, ok := e["id"]; ok {
+			if id.kind != haystackTypeRef {
+				return fmt.Errorf("bad type for id %v (expected ref)", id)
+			}
+			entity.id = id.ref
+			delete(e, "id")
+		} else {
+			return fmt.Errorf("row does not have any id %v", e)
+		}
+		for k, v := range e {
+			// TODO find label
+			if label, ok := labels[k]; ok {
+				entity.tags[label] = v
+			} else {
+				return fmt.Errorf("bad input: found tag %v in entity that is undeclared", k)
+
+			}
+		}
+		entities = append(entities, entity)
+	}
 	g.Meta = temp.Meta
+	g.entities = entities
 	return nil
 }
 
