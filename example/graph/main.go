@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"regexp"
 
 	"encoding/json"
 
@@ -21,110 +20,30 @@ var ports = flag.Bool("ports", false, "generate Graphviz with ports links")
 
 func main() {
 	flag.Parse()
-	gridDB := gohaystack.NewGrid()
+	g := gohaystack.NewGrid()
 	dec := json.NewDecoder(os.Stdin)
-	err := dec.Decode(&gridDB)
+	err := dec.Decode(&g)
 	if err != nil {
 		log.Fatal(err)
 	}
-	g := newGraphHandler(gridDB)
-	err = g.addNodes()
+	gr := newGraphHandler(g)
+	err = gr.addNodes()
 	if err != nil {
 		log.Fatal(err)
 	}
-	g.addEdges()
+	gr.addEdges()
 
-	result, err := dot.Marshal(g.graph, "", "", "  ")
+	result, err := dot.Marshal(gr.graph, "", "", "  ")
 	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Print(string(result))
-}
 
-var cols []string
-
-type graphHandler struct {
-	nodesCounter int64
-	graph        *simple.UndirectedGraph
-	grid         *gohaystack.Grid
-	colID        int              // the index of the ID within the graph
-	refsID       []int            // the indexes of all references *Ref in haystack
-	dict         map[string]*node // link between haystack ID and node ID
-}
-
-func newGraphHandler(g *gohaystack.Grid) *graphHandler {
-	var id int
-	var refs []int
-	var validRef = regexp.MustCompile(`.*Ref$`)
-	cols = make([]string, len(g.Cols))
-	for i, name := range g.Cols {
-		cols[i] = name
-		if name == "id" {
-			id = i
-		}
-	}
-	for i, name := range g.Cols {
-		if validRef.MatchString(name) {
-			refs = append(refs, i)
-		}
-	}
-
-	return &graphHandler{
-		nodesCounter: 0,
-		graph:        simple.NewUndirectedGraph(),
-		grid:         g,
-		colID:        id,
-		refsID:       refs,
-		dict:         make(map[string]*node),
-	}
-}
-
-func (gh *graphHandler) addNodes() error {
-	it := gohaystack.NewRowIterator(gh.grid)
-	for i := 0; it.Next(); i++ {
-		if *maxnodes != 0 && i > *maxnodes {
-			return nil
-		}
-		row := it.Row()
-		content := make([]*gohaystack.Tag, len(row))
-		copy(content, row)
-		n := &node{
-			id:      gh.nodesCounter,
-			content: content,
-		}
-		gh.graph.AddNode(n)
-		gh.dict[row[gh.colID].Hash()] = n
-		gh.nodesCounter++
-	}
-	return nil
-}
-
-func (gh *graphHandler) addEdges() error {
-	nodesIT := gh.graph.Nodes()
-	for nodesIT.Next() {
-		currNode := nodesIT.Node()
-		row := currNode.(*node).content
-		from := gh.dict[row[gh.colID].Hash()]
-		for _, i := range gh.refsID {
-			if row[i] == nil {
-				continue
-			}
-			to := gh.dict[row[i].Hash()]
-			if to != nil && from.ID() != to.ID() {
-				if *ports {
-					gh.graph.SetEdge(newEdge(from, to, gh.grid.Cols[i], "id"))
-				} else {
-					gh.graph.SetEdge(newEdge(from, to, "", ""))
-				}
-			}
-		}
-	}
-	return nil
 }
 
 type node struct {
 	id      int64
-	content []*gohaystack.Tag
+	content *gohaystack.Entity
 }
 
 // node's uniq ID to fulfil graph.Node
@@ -151,22 +70,41 @@ func (n *node) Attributes() []encoding.Attribute {
 	return attrs
 }
 
+type graphHandler struct {
+	graph *simple.UndirectedGraph
+	grid  *gohaystack.Grid
+	refs  []*gohaystack.Label // Hold all of the labels sometingRef
+}
+
+func newGraphHandler(g *gohaystack.Grid) *graphHandler {
+	return &graphHandler{
+		graph: simple.NewUndirectedGraph(),
+		grid:  g,
+		refs:  make([]*gohaystack.Label, 0),
+	}
+}
+
 func (n *node) generateLabel() string {
-	//output := fmt.Sprintf("%v|{", n.id)
 	output := "{"
+	output = fmt.Sprintf("%v{%v}|", output, *n.content.GetID())
 	var tmp string
-	for i, v := range n.content {
+	for k, v := range n.content.GetTags() {
 		if v != nil {
+			display, _ := json.Marshal(v)
 			if tmp != "" {
 				tmp = tmp + "|"
 			}
-			switch v.Kind {
-			case gohaystack.HaystackTypeRef:
-				tmp = tmp + fmt.Sprintf("{<%v>%v|@%v}", cols[i], cols[i], v.Value)
-			case gohaystack.HaystackTypeMarker:
-				tmp = tmp + fmt.Sprintf("{%v}", cols[i])
+			switch v.GetKind() {
+			/*
+					case gohaystack.HaystackTypeRef:
+						tmp = tmp + fmt.Sprintf("{<%v>%v|@%v}", cols[i], cols[i], v.Value)
+					case gohaystack.HaystackTypeMarker:
+						tmp = tmp + fmt.Sprintf("{%v}", cols[i])
+				case gohaystack.HaystackTypeRef:
+					tmp = tmp + fmt.Sprintf("{<%v>%v|%@v}", k.Value, *k, string(display))
+			*/
 			default:
-				tmp = tmp + fmt.Sprintf("{%v|%v}", cols[i], v.Value)
+				tmp = tmp + fmt.Sprintf("{%v|%v}", *k, string(display))
 			}
 		}
 	}
@@ -202,4 +140,27 @@ func newEdge(from, to graph.Node, fromPort, toPort string) edgeWithPorts {
 		fromPort: fromPort,
 		toPort:   toPort,
 	}
+}
+
+func (gh *graphHandler) addNodes() error {
+	entities := gh.grid.GetEntities()
+	ids := make(map[*gohaystack.HaystackID]int64, len(entities))
+	for i, entity := range entities {
+		n := &node{
+			id:      int64(i),
+			content: entity,
+		}
+		ids[entity.GetID()] = int64(i)
+		gh.graph.AddNode(n)
+	}
+	// Now generate the edges
+	/*
+		for i, entity := range entities {
+		}
+	*/
+	return nil
+}
+
+func (gh *graphHandler) addEdges() error {
+	return nil
 }

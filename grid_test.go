@@ -5,174 +5,105 @@ import (
 	"testing"
 )
 
-func TestGrid_UnmarshalJSON(t *testing.T) {
-	grid := NewGrid()
-	err := grid.UnmarshalJSON(samplePayload)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if grid.numberOfRows != 3 {
-		t.Fail()
-	}
-}
-
-func TestGrid_NewRow(t *testing.T) {
-	type fields struct {
-		Meta         map[string]string
-		db           map[string][]*Tag
-		colsDis      map[string]string
-		Cols         map[int]string
-		lastCol      int
-		numberOfRows int
-	}
+func TestNewGrid(t *testing.T) {
 	tests := []struct {
-		name   string
-		fields fields
-		want   int
+		name string
+		want *Grid
 	}{
 		{
-			name: "add row",
-			fields: fields{
-				db: map[string][]*Tag{
-					"col1": {
-						{Value: 42},
-						{Value: 43},
-						{Value: 44},
-					},
+			"simple grid",
+			&Grid{
+				Meta: map[string]string{
+					"Ver": "3.0",
 				},
-				Cols: map[int]string{
-					0: "col1",
-				},
-				numberOfRows: 1,
+				entities: make([]*Entity, 0),
 			},
-			want: 1,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			g := &Grid{
-				Meta:         tt.fields.Meta,
-				db:           tt.fields.db,
-				colsDis:      tt.fields.colsDis,
-				Cols:         tt.fields.Cols,
-				lastCol:      tt.fields.lastCol,
-				numberOfRows: tt.fields.numberOfRows,
-			}
-			if got := g.NewRow(); got != tt.want {
-				t.Errorf("Grid.NewRow() = %v, want %v", got, tt.want)
+			if got := NewGrid(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewGrid() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestGrid_CloneStruct(t *testing.T) {
-	testGrid := NewGrid()
-	testGrid.AddColumn("col1", "la colonne 1 (string)")
-	testGrid.AddColumn("col2", "")
-	testGrid.AddColumn("col3", "array")
-	testGrid.AddColumn("col4", "")
-	err := testGrid.AddRow([]*Tag{
-		NewTag(HaystackTypeStr, "bla"),
-		NewTag(HaystackTypeStr, "blo"),
-		NewTag(HaystackTypeStr, "blu"),
-		NewTag(HaystackTypeStr, "bli"),
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
-	newGrid := testGrid.CloneStruct()
-	if !reflect.DeepEqual(newGrid.colsDis, testGrid.colsDis) {
-		t.Fail()
-	}
-	if !reflect.DeepEqual(newGrid.Cols, testGrid.Cols) {
-		t.Fail()
-	}
-	if !reflect.DeepEqual(newGrid.lastCol, testGrid.lastCol) {
-		t.Fail()
-	}
-	if !reflect.DeepEqual(newGrid.Meta, testGrid.Meta) {
-		t.Fail()
-	}
-}
-
-func TestGrid_GetCol(t *testing.T) {
+func TestGrid_NewEntity(t *testing.T) {
+	nullID := NewHaystackID("")
 	type fields struct {
-		Meta         map[string]string
-		db           map[string][]*Tag
-		colsDis      map[string]string
-		Cols         map[int]string
-		lastCol      int
-		numberOfRows int
+		Meta     map[string]string
+		labels   []*Label
+		entities []*Entity
 	}
 	type args struct {
-		col string
+		id *HaystackID
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		args   args
-		want   []*Tag
-		want1  bool
+		want   *Entity
 	}{
 		{
-			"ok",
+			"new Entity with empty ID",
 			fields{
-				db: map[string][]*Tag{"col1": {nil}},
+				Meta: map[string]string{
+					"Ver": "3,0",
+				},
+				labels:   make([]*Label, 0),
+				entities: make([]*Entity, 0),
 			},
 			args{
-				"col1",
+				nullID,
 			},
-			[]*Tag{nil},
-			true,
+			&Entity{
+				id:   nullID,
+				tags: make(map[*Label]*Value),
+			},
 		},
-		{
-			"ko",
-			fields{
-				db: map[string][]*Tag{"col1": {nil}},
-			},
-			args{
-				"col2",
-			},
-			nil,
-			false,
-		},
-		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			g := &Grid{
-				Meta:         tt.fields.Meta,
-				db:           tt.fields.db,
-				colsDis:      tt.fields.colsDis,
-				Cols:         tt.fields.Cols,
-				lastCol:      tt.fields.lastCol,
-				numberOfRows: tt.fields.numberOfRows,
+				Meta:     tt.fields.Meta,
+				entities: tt.fields.entities,
 			}
-			got, got1 := g.GetCol(tt.args.col)
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Grid.GetCol() got = %v, want %v", got, tt.want)
-			}
-			if got1 != tt.want1 {
-				t.Errorf("Grid.GetCol() got1 = %v, want %v", got1, tt.want1)
+			if got := g.NewEntity(tt.args.id); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Grid.NewEntity() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestGrid_Set(t *testing.T) {
-	g := NewGrid()
-	g.AddColumn("col1", "la colonne 1 (string)")
-	err := g.Set(0, "col1", nil)
-	if err == nil {
-		t.Fail()
+func TestGrid_GetEntities(t *testing.T) {
+	type fields struct {
+		Meta     map[string]string
+		labels   []*Label
+		entities []*Entity
 	}
-	g.NewRow()
-	err = g.Set(0, "col1", nil)
-	if err != nil {
-		t.Fail()
+	tests := []struct {
+		name   string
+		fields fields
+		want   []*Entity
+	}{
+		{
+			"simple test",
+			fields{
+				entities: []*Entity{},
+			},
+			[]*Entity{},
+		},
 	}
-	err = g.Set(0, "colX", nil)
-	if err == nil {
-		t.Fail()
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			g := &Grid{
+				Meta:     tt.fields.Meta,
+				entities: tt.fields.entities,
+			}
+			if got := g.GetEntities(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Grid.GetEntities() = %v, want %v", got, tt.want)
+			}
+		})
 	}
 }
