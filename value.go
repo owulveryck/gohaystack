@@ -93,6 +93,14 @@ func (v *Value) unmarshalJSONNotString(b []byte) error {
 		v.b = boolean
 		return nil
 	}
+	var g Grid
+	err = json.Unmarshal(b, &g)
+	if err == nil {
+		v.kind = HaystackTypeGrid
+		v.g = &g
+		return nil
+	}
+
 	return errors.New("not implemented")
 }
 

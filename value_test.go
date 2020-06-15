@@ -449,6 +449,43 @@ func TestValue_UnmarshalJSON(t *testing.T) {
 			},
 			false,
 		},
+		{
+			"bad entry boolean",
+			fields{
+				kind: HaystackTypeBool,
+				b:    true,
+			},
+			args{
+				[]byte(`ttttrue`),
+			},
+			true,
+		},
+		{
+			"grid",
+			fields{
+				kind: HaystackTypeGrid,
+				g: &Grid{
+					Meta: map[string]string{
+						"ver": "3.0",
+					},
+					entities: []*Entity{
+						{
+							id: NewHaystackID("myid"),
+							tags: map[*Label]*Value{
+								{Value: "blabla"}: {
+									kind: HaystackTypeStr,
+									str:  &blabla,
+								},
+							},
+						},
+					},
+				},
+			},
+			args{
+				[]byte(`{"meta":{"ver":"3.0"}, "cols":[{"name": "blabla"}],"rows":[{"id":"r:myid","blabla":"blabla"}]}`),
+			},
+			false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
