@@ -106,7 +106,7 @@ func TestGrid_UnmarshalJSON(t *testing.T) {
 						id: NewHaystackID("myid"),
 						tags: map[*Label]*Value{
 							&Label{Value: "blabla"}: &Value{
-								kind: haystackTypeStr,
+								kind: HaystackTypeStr,
 								str:  &blabla,
 							},
 						},

@@ -16,7 +16,7 @@ func TestValue_MarshalJSON(t *testing.T) {
 	kwh := NewUnit("kwh")
 	//simpleTestStrWithColon := "test:bla"
 	type fields struct {
-		kind   kind
+		kind   Kind
 		str    *string
 		number struct {
 			value float32
@@ -43,7 +43,7 @@ func TestValue_MarshalJSON(t *testing.T) {
 		{
 			"simple url",
 			fields{
-				kind: haystackTypeURI,
+				kind: HaystackTypeURI,
 				u:    u,
 			},
 			[]byte(`"u:https://example.com"`),
@@ -52,7 +52,7 @@ func TestValue_MarshalJSON(t *testing.T) {
 		{
 			"simple marker",
 			fields{
-				kind: haystackTypeMarker,
+				kind: HaystackTypeMarker,
 			},
 			[]byte(`"m:"`),
 			false,
@@ -60,7 +60,7 @@ func TestValue_MarshalJSON(t *testing.T) {
 		{
 			"simple reference",
 			fields{
-				kind: haystackTypeRef,
+				kind: HaystackTypeRef,
 				ref:  id,
 			},
 			[]byte(`"r:` + string(*id) + `"`),
@@ -69,7 +69,7 @@ func TestValue_MarshalJSON(t *testing.T) {
 		{
 			"simple number without unit",
 			fields{
-				kind: haystackTypeNumber,
+				kind: HaystackTypeNumber,
 				number: struct {
 					value float32
 					unit  Unit
@@ -83,7 +83,7 @@ func TestValue_MarshalJSON(t *testing.T) {
 		{
 			"simple number with unit",
 			fields{
-				kind: haystackTypeNumber,
+				kind: HaystackTypeNumber,
 				number: struct {
 					value float32
 					unit  Unit
@@ -98,7 +98,7 @@ func TestValue_MarshalJSON(t *testing.T) {
 		{
 			"simple string",
 			fields{
-				kind: haystackTypeStr,
+				kind: HaystackTypeStr,
 				str:  &simpleTestStr,
 			},
 			[]byte(`"s:` + simpleTestStr + `"`),
@@ -107,7 +107,7 @@ func TestValue_MarshalJSON(t *testing.T) {
 		{
 			"boolean",
 			fields{
-				kind: haystackTypeBool,
+				kind: HaystackTypeBool,
 				b:    true,
 			},
 			[]byte(`true`),
@@ -116,14 +116,14 @@ func TestValue_MarshalJSON(t *testing.T) {
 		{
 			"list",
 			fields{
-				kind: haystackTypeList,
+				kind: HaystackTypeList,
 				list: []*Value{
 					{
-						kind: haystackTypeStr,
+						kind: HaystackTypeStr,
 						str:  &abc,
 					},
 					{
-						kind: haystackTypeStr,
+						kind: HaystackTypeStr,
 						str:  &def,
 					},
 				},
@@ -134,10 +134,10 @@ func TestValue_MarshalJSON(t *testing.T) {
 		{
 			"dict",
 			fields{
-				kind: haystackTypeDict,
+				kind: HaystackTypeDict,
 				dict: map[string]*Value{
 					"a": {
-						kind: haystackTypeStr,
+						kind: HaystackTypeStr,
 						str:  &abc,
 					},
 				},
@@ -148,7 +148,7 @@ func TestValue_MarshalJSON(t *testing.T) {
 		{
 			"coord",
 			fields{
-				kind: haystackTypeCoord,
+				kind: HaystackTypeCoord,
 				coord: struct {
 					long float32
 					lat  float32
@@ -163,7 +163,7 @@ func TestValue_MarshalJSON(t *testing.T) {
 		{
 			"date",
 			fields{
-				kind: haystackTypeDate,
+				kind: HaystackTypeDate,
 				t:    time.Date(2009, time.November, 10, 23, 0, 0, 0, time.UTC),
 			},
 			[]byte(`"d:2009-11-10"`),
@@ -172,7 +172,7 @@ func TestValue_MarshalJSON(t *testing.T) {
 		{
 			"time",
 			fields{
-				kind: haystackTypeTime,
+				kind: HaystackTypeTime,
 				t:    time.Date(2009, time.November, 10, 23, 01, 02, 0, time.UTC),
 			},
 			[]byte(`"h:23:01:02"`),
@@ -181,7 +181,7 @@ func TestValue_MarshalJSON(t *testing.T) {
 		{
 			"date time",
 			fields{
-				kind: haystackTypeDateTime,
+				kind: HaystackTypeDateTime,
 				t:    time.Date(2009, time.November, 10, 23, 01, 02, 0, time.UTC),
 			},
 			[]byte(`"t:2009-11-10T23:01:02Z"`),
@@ -190,7 +190,7 @@ func TestValue_MarshalJSON(t *testing.T) {
 		{
 			"remove",
 			fields{
-				kind: haystackTypeRemove,
+				kind: HaystackTypeRemove,
 			},
 			[]byte(`"-:"`),
 			false,
@@ -198,7 +198,7 @@ func TestValue_MarshalJSON(t *testing.T) {
 		{
 			"grid",
 			fields{
-				kind: haystackTypeGrid,
+				kind: HaystackTypeGrid,
 				g:    NewGrid(),
 			},
 			[]byte(`{"meta":{"Ver":"3.0"},"cols":[],"rows":[]}`),
@@ -207,7 +207,7 @@ func TestValue_MarshalJSON(t *testing.T) {
 		{
 			"na",
 			fields{
-				kind: haystackTypeNA,
+				kind: HaystackTypeNA,
 			},
 			[]byte(`"z:"`),
 			false,
@@ -215,7 +215,7 @@ func TestValue_MarshalJSON(t *testing.T) {
 		{
 			"Unhandled",
 			fields{
-				kind: haystackLastType,
+				kind: HaystackLastType,
 			},
 			nil,
 			true,
@@ -251,7 +251,7 @@ func TestValue_MarshalJSON(t *testing.T) {
 func TestValue_GetString(t *testing.T) {
 	testStr := "testStr"
 	type fields struct {
-		kind   kind
+		kind   Kind
 		str    *string
 		number struct {
 			value float32
@@ -278,7 +278,7 @@ func TestValue_GetString(t *testing.T) {
 		{
 			"string",
 			fields{
-				kind: haystackTypeStr,
+				kind: HaystackTypeStr,
 				str:  &testStr,
 			},
 			testStr,
@@ -287,7 +287,7 @@ func TestValue_GetString(t *testing.T) {
 		{
 			"no string",
 			fields{
-				kind: haystackLastType,
+				kind: HaystackLastType,
 				str:  &testStr,
 			},
 			"",
@@ -324,7 +324,7 @@ func TestValue_GetString(t *testing.T) {
 func TestValue_UnmarshalJSON(t *testing.T) {
 	blabla := "blabla"
 	type fields struct {
-		kind   kind
+		kind   Kind
 		str    *string
 		number struct {
 			value float32
@@ -370,7 +370,7 @@ func TestValue_UnmarshalJSON(t *testing.T) {
 		{
 			"string",
 			fields{
-				kind: haystackTypeStr,
+				kind: HaystackTypeStr,
 				str:  &blabla,
 			},
 			args{
@@ -417,7 +417,7 @@ func TestNewRef(t *testing.T) {
 				id,
 			},
 			&Value{
-				kind: haystackTypeRef,
+				kind: HaystackTypeRef,
 				ref:  id,
 			},
 		},
@@ -449,7 +449,7 @@ func TestNewNumber(t *testing.T) {
 				unit:  kwh,
 			},
 			&Value{
-				kind: haystackTypeNumber,
+				kind: HaystackTypeNumber,
 				number: struct {
 					value float32
 					unit  Unit
@@ -486,7 +486,7 @@ func TestNewURL(t *testing.T) {
 				u,
 			},
 			&Value{
-				kind: haystackTypeURI,
+				kind: HaystackTypeURI,
 				u:    u,
 			},
 		},
@@ -502,7 +502,7 @@ func TestNewURL(t *testing.T) {
 
 func TestValue_unmarshalJSONString(t *testing.T) {
 	type fields struct {
-		kind   kind
+		kind   Kind
 		str    *string
 		number struct {
 			value float32
@@ -588,6 +588,66 @@ func TestValue_unmarshalJSONString(t *testing.T) {
 			}
 			if err := v.unmarshalJSONString(tt.args.b); (err != nil) != tt.wantErr {
 				t.Errorf("Value.unmarshalJSONString() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestValue_GetKind(t *testing.T) {
+	type fields struct {
+		kind   Kind
+		str    *string
+		number struct {
+			value float32
+			unit  Unit
+		}
+		b     bool
+		t     time.Time
+		u     *url.URL
+		ref   *HaystackID
+		g     *Grid
+		dict  map[string]*Value
+		list  []*Value
+		coord struct {
+			long float32
+			lat  float32
+		}
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   Kind
+	}{
+		{
+			"empty",
+			fields{},
+			HaystackTypeUndefined,
+		},
+		{
+			"simple",
+			fields{
+				kind: HaystackTypeBool,
+			},
+			HaystackTypeBool,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			v := &Value{
+				kind:   tt.fields.kind,
+				str:    tt.fields.str,
+				number: tt.fields.number,
+				b:      tt.fields.b,
+				t:      tt.fields.t,
+				u:      tt.fields.u,
+				ref:    tt.fields.ref,
+				g:      tt.fields.g,
+				dict:   tt.fields.dict,
+				list:   tt.fields.list,
+				coord:  tt.fields.coord,
+			}
+			if got := v.GetKind(); got != tt.want {
+				t.Errorf("Value.GetKind() = %v, want %v", got, tt.want)
 			}
 		})
 	}

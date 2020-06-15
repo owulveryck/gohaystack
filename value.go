@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-type kind int
+type Kind int
 
 // Unit represents a unit is a number
 type Unit *string
@@ -23,7 +23,7 @@ func NewUnit(u string) Unit {
 // NewNumber ...
 func NewNumber(value float32, unit Unit) *Value {
 	return &Value{
-		kind: haystackTypeNumber,
+		kind: HaystackTypeNumber,
 		number: struct {
 			value float32
 			unit  Unit
@@ -37,15 +37,20 @@ func NewNumber(value float32, unit Unit) *Value {
 // NewURL ...
 func NewURL(u *url.URL) *Value {
 	return &Value{
-		kind: haystackTypeURI,
+		kind: HaystackTypeURI,
 		u:    u,
 	}
 
 }
 
+// GetKind of the underlying value
+func (v *Value) GetKind() Kind {
+	return v.kind
+}
+
 // Value is an haystack value
 type Value struct {
-	kind   kind
+	kind   Kind
 	str    *string
 	number struct {
 		value float32
@@ -73,17 +78,17 @@ func (v *Value) unmarshalJSONString(b []byte) error {
 	res := re.FindStringSubmatch(string(b))
 	switch res[2] {
 	case ``:
-		v.kind = haystackTypeStr
+		v.kind = HaystackTypeStr
 		val := res[3]
 		v.str = &val
 		return nil
 	case `s`:
-		v.kind = haystackTypeStr
+		v.kind = HaystackTypeStr
 		val := res[3]
 		v.str = &val
 		return nil
 	case `r`:
-		v.kind = haystackTypeRef
+		v.kind = HaystackTypeRef
 		val := res[3]
 		id := HaystackID(val)
 		v.ref = &id
@@ -110,35 +115,35 @@ func (v *Value) UnmarshalJSON(b []byte) error {
 func (v *Value) MarshalJSON() ([]byte, error) {
 	var output string
 	switch v.kind {
-	case haystackTypeBool:
+	case HaystackTypeBool:
 		output = fmt.Sprintf("%v", v.b)
-	case haystackTypeDict:
+	case HaystackTypeDict:
 		return json.Marshal(v.dict)
-	case haystackTypeList:
+	case HaystackTypeList:
 		return json.Marshal(v.list)
-	case haystackTypeGrid:
+	case HaystackTypeGrid:
 		return json.Marshal(v.g)
-	case haystackTypeStr:
+	case HaystackTypeStr:
 		output = `"s:` + *v.str + `"`
-	case haystackTypeRef:
+	case HaystackTypeRef:
 		output = `"r:` + string(*v.ref) + `"`
-	case haystackTypeRemove:
+	case HaystackTypeRemove:
 		output = `"-:"`
-	case haystackTypeMarker:
+	case HaystackTypeMarker:
 		output = `"m:"`
-	case haystackTypeNA:
+	case HaystackTypeNA:
 		output = `"z:"`
-	case haystackTypeCoord:
+	case HaystackTypeCoord:
 		output = fmt.Sprintf(`"c:%v,%v"`, v.coord.lat, v.coord.long)
-	case haystackTypeDate:
+	case HaystackTypeDate:
 		output = `"d:` + v.t.Format("2006-01-02") + `"`
-	case haystackTypeTime:
+	case HaystackTypeTime:
 		output = `"h:` + v.t.Format("15:04:05") + `"`
-	case haystackTypeDateTime:
+	case HaystackTypeDateTime:
 		output = `"t:` + v.t.Format(time.RFC3339) + `"`
-	case haystackTypeURI:
+	case HaystackTypeURI:
 		output = `"u:` + (*v.u).String() + `"`
-	case haystackTypeNumber:
+	case HaystackTypeNumber:
 		var unit string
 		if v.number.unit != nil {
 			unit = ` ` + *v.number.unit
@@ -153,7 +158,7 @@ func (v *Value) MarshalJSON() ([]byte, error) {
 // NewRef new reference
 func NewRef(r *HaystackID) *Value {
 	return &Value{
-		kind: haystackTypeRef,
+		kind: HaystackTypeRef,
 		ref:  r,
 	}
 }
@@ -161,61 +166,61 @@ func NewRef(r *HaystackID) *Value {
 // NewStr new string value
 func NewStr(s string) *Value {
 	return &Value{
-		kind: haystackTypeStr,
+		kind: HaystackTypeStr,
 		str:  &s,
 	}
 }
 
 // MarkerValue ...
 var MarkerValue = &Value{
-	kind: haystackTypeMarker,
+	kind: HaystackTypeMarker,
 }
 
 // GetString value; returns an error if the underlying type is not an haystack string
 func (v *Value) GetString() (string, error) {
-	if v.kind != haystackTypeStr {
+	if v.kind != HaystackTypeStr {
 		return "", errors.New("value type is not a string")
 	}
 	return *v.str, nil
 }
 
 const (
-	// haystackTypeUndefined ...
-	haystackTypeUndefined kind = iota
-	// haystackTypeGrid is a Grid object
-	haystackTypeGrid
-	// haystackTypeList Array
-	haystackTypeList
-	// haystackTypeDict Object
-	haystackTypeDict
-	// haystackTypenull null
-	haystackTypenull
-	// haystackTypeBool Boolean
-	haystackTypeBool
-	// haystackTypeMarker "m:"
-	haystackTypeMarker
-	// haystackTypeRemove "-:"
-	haystackTypeRemove
-	// haystackTypeNA "z:"
-	haystackTypeNA
-	// haystackTypeNumber "n:<float> [unit]" "n:45.5" "n:73.2 °F" "n:-INF"
-	haystackTypeNumber
-	// haystackTypeRef "r:<id> [dis]"  "r:abc-123" "r:abc-123 RTU #3"
-	haystackTypeRef
-	// haystackTypeStr "hello" "s:hello"
-	haystackTypeStr
-	// haystackTypeDate "d:2014-01-03"
-	haystackTypeDate
-	// haystackTypeTime "h:23:59:00"
-	haystackTypeTime
-	// haystackTypeDateTime "t:2015-06-08T15:47:41-04:00 New_York"
-	haystackTypeDateTime
-	// haystackTypeURI "u:http://project-haystack.org/"
-	haystackTypeURI
-	// haystackTypeCoord "c:<lat>,<lng>" "c:37.545,-77.449"
-	haystackTypeCoord
-	//haystackTypeXStr "x:Type:value"
-	haystackTypeXStr
-	// haystackLastType ...
-	haystackLastType
+	// HaystackTypeUndefined ...
+	HaystackTypeUndefined Kind = iota
+	// HaystackTypeGrid is a Grid object
+	HaystackTypeGrid
+	// HaystackTypeList Array
+	HaystackTypeList
+	// HaystackTypeDict Object
+	HaystackTypeDict
+	// HaystackTypeNull null
+	HaystackTypeNull
+	// HaystackTypeBool Boolean
+	HaystackTypeBool
+	// HaystackTypeMarker "m:"
+	HaystackTypeMarker
+	// HaystackTypeRemove "-:"
+	HaystackTypeRemove
+	// HaystackTypeNA "z:"
+	HaystackTypeNA
+	// HaystackTypeNumber "n:<float> [unit]" "n:45.5" "n:73.2 °F" "n:-INF"
+	HaystackTypeNumber
+	// HaystackTypeRef "r:<id> [dis]"  "r:abc-123" "r:abc-123 RTU #3"
+	HaystackTypeRef
+	// HaystackTypeStr "hello" "s:hello"
+	HaystackTypeStr
+	// HaystackTypeDate "d:2014-01-03"
+	HaystackTypeDate
+	// HaystackTypeTime "h:23:59:00"
+	HaystackTypeTime
+	// HaystackTypeDateTime "t:2015-06-08T15:47:41-04:00 New_York"
+	HaystackTypeDateTime
+	// HaystackTypeURI "u:http://project-haystack.org/"
+	HaystackTypeURI
+	// HaystackTypeCoord "c:<lat>,<lng>" "c:37.545,-77.449"
+	HaystackTypeCoord
+	//HaystackTypeXStr "x:Type:value"
+	HaystackTypeXStr
+	// HaystackLastType ...
+	HaystackLastType
 )

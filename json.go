@@ -44,7 +44,7 @@ func (g *Grid) UnmarshalJSON(b []byte) error {
 			tags: make(map[*Label]*Value, len(e)-1),
 		}
 		if id, ok := e["id"]; ok {
-			if id.kind != haystackTypeRef {
+			if id.kind != HaystackTypeRef {
 				return fmt.Errorf("bad type for id %v (expected ref)", id)
 			}
 			entity.id = id.ref
@@ -108,7 +108,7 @@ func (g *Grid) MarshalJSON() ([]byte, error) {
 	for i, entity := range g.entities {
 		carrier.Rows[i] = make(map[string]*Value, len(entity.tags)+1) // all tags + id
 		carrier.Rows[i]["id"] = &Value{
-			kind: haystackTypeRef,
+			kind: HaystackTypeRef,
 			ref:  entity.id,
 		}
 		for k, v := range entity.tags {
