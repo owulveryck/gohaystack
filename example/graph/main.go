@@ -154,10 +154,10 @@ func (gh *graphHandler) addNodes() error {
 		gh.graph.AddNode(n)
 	}
 	// Now generate the edges
-	for i, entity := range entities {
-		ids[entity.GetID()] = int64(i)
-		gh.graph.AddNode(n)
-	}
+	/*
+		for i, entity := range entities {
+		}
+	*/
 	return nil
 }
 
