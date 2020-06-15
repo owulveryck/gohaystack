@@ -1,6 +1,7 @@
 package gohaystack
 
 import (
+	"math"
 	"net/url"
 	"reflect"
 	"testing"
@@ -323,6 +324,7 @@ func TestValue_GetString(t *testing.T) {
 
 func TestValue_UnmarshalJSON(t *testing.T) {
 	blabla := "blabla"
+	dict := `Dict!`
 	type fields struct {
 		kind   Kind
 		str    *string
@@ -375,6 +377,75 @@ func TestValue_UnmarshalJSON(t *testing.T) {
 			},
 			args{
 				[]byte(`"s:blabla"`),
+			},
+			false,
+		},
+		{
+			"list",
+			fields{
+				kind: HaystackTypeList,
+				list: []*Value{
+					{
+						kind: HaystackTypeNumber,
+						number: struct {
+							value float32
+							unit  Unit
+						}{
+							value: 1,
+						},
+					},
+					{
+						kind: HaystackTypeNumber,
+						number: struct {
+							value float32
+							unit  Unit
+						}{
+							value: 2,
+						},
+					},
+					{
+						kind: HaystackTypeNumber,
+						number: struct {
+							value float32
+							unit  Unit
+						}{
+							value: 3,
+						},
+					},
+				},
+			},
+			args{
+				[]byte(`["n:1", "n:2", "n:3"]`),
+			},
+			false,
+		},
+		{
+			"dict",
+			fields{
+				kind: HaystackTypeDict,
+				dict: map[string]*Value{
+					"dis": {
+						kind: HaystackTypeStr,
+						str:  &dict,
+					},
+					"foo": {
+						kind: HaystackTypeMarker,
+					},
+				},
+			},
+			args{
+				[]byte(`{"dis":"Dict!", "foo":"m:"}`),
+			},
+			false,
+		},
+		{
+			"boolean",
+			fields{
+				kind: HaystackTypeBool,
+				b:    true,
+			},
+			args{
+				[]byte(`true`),
 			},
 			false,
 		},
@@ -505,6 +576,9 @@ func TestValue_unmarshalJSONString(t *testing.T) {
 	bladiblablabla := `bladibla blabla`
 	bladiblas := `blablas:bladibla blabla`
 	bladiblaRef := HaystackID(`bladibla`)
+	kwh := `kwh`
+	date := time.Date(1970, time.January, 01, 00, 00, 00, 00, time.UTC)
+	u, _ := url.Parse("http://bing.com/search?q=dotnet")
 	type fields struct {
 		kind   Kind
 		str    *string
@@ -626,6 +700,238 @@ func TestValue_unmarshalJSONString(t *testing.T) {
 				[]byte(`z:`),
 			},
 			false,
+		},
+		{
+			"number invalid",
+			fields{},
+			&Value{},
+			args{
+				[]byte(`n:invalid`),
+			},
+			true,
+		},
+		{
+			"number INF",
+			fields{},
+			&Value{
+				kind: HaystackTypeNumber,
+				number: struct {
+					value float32
+					unit  Unit
+				}{
+					value: float32(math.Inf(1)),
+				},
+			},
+			args{
+				[]byte(`n:INF`),
+			},
+			false,
+		},
+		{
+			"number -INF",
+			fields{},
+			&Value{
+				kind: HaystackTypeNumber,
+				number: struct {
+					value float32
+					unit  Unit
+				}{
+					value: float32(math.Inf(-1)),
+				},
+			},
+			args{
+				[]byte(`n:-INF`),
+			},
+			false,
+		},
+		{
+			"number with unit",
+			fields{},
+			&Value{
+				kind: HaystackTypeNumber,
+				number: struct {
+					value float32
+					unit  Unit
+				}{
+					value: 42.0,
+					unit:  &kwh,
+				},
+			},
+			args{
+				[]byte(`n:42.0 kwh`),
+			},
+			false,
+		},
+		{
+			"invalid number",
+			fields{},
+			&Value{},
+			args{
+				[]byte(`n:42.0 kwh bla`),
+			},
+			true,
+		},
+		{
+			"invalid date",
+			fields{},
+			&Value{},
+			args{
+				[]byte(`d:invalid`),
+			},
+			true,
+		},
+		{
+			"valid date",
+			fields{},
+			&Value{
+				kind: HaystackTypeDate,
+				t:    date,
+			},
+			args{
+				[]byte(`d:1970-01-01`),
+			},
+			false,
+		},
+		{
+			"invalid time",
+			fields{},
+			&Value{},
+			args{
+				[]byte(`h:INVALID`),
+			},
+			true,
+		},
+		{
+			"valid time",
+			fields{},
+			&Value{
+				kind: HaystackTypeTime,
+				t:    date,
+			},
+			args{
+				[]byte(`h:00:00:00`),
+			},
+			false,
+		},
+		{
+			"invalid datetime",
+			fields{},
+			&Value{},
+			args{
+				[]byte(`t:INVALID`),
+			},
+			true,
+		},
+		{
+			"valid datetime without tz",
+			fields{},
+			&Value{
+				kind: HaystackTypeDateTime,
+				t:    date,
+			},
+			args{
+				[]byte(`t:1970-01-01T00:00:00Z`),
+			},
+			false,
+		},
+		{
+			"valid datetime with tz",
+			fields{},
+			&Value{},
+			/*
+				&Value{
+					kind: HaystackTypeDateTime,
+					t:    date,
+				},
+			*/
+			args{
+				[]byte(`t:1970-01-01T00:00:00-04:00 New_York`),
+			},
+			true,
+		},
+		{
+			"invalid uri",
+			fields{},
+			&Value{},
+			args{
+				append([]byte(`u:aa`), byte(0x7f)),
+			},
+			true,
+		},
+		{
+			"valid uri",
+			fields{},
+			&Value{
+				kind: HaystackTypeURI,
+				u:    u,
+			},
+			args{
+				[]byte(`u:http://bing.com/search?q=dotnet`),
+			},
+			false,
+		},
+		{
+			"invalid coord, missing long",
+			fields{},
+			&Value{},
+			args{
+				[]byte(`c:12`),
+			},
+			true,
+		},
+		{
+			"invalid coord too many args",
+			fields{},
+			&Value{},
+			args{
+				[]byte(`c:12,23,34`),
+			},
+			true,
+		},
+		{
+			"invalid coord not a number",
+			fields{},
+			&Value{},
+			args{
+				[]byte(`c:aa,41`),
+			},
+			true,
+		},
+		{
+			"invalid coord not a number",
+			fields{},
+			&Value{},
+			args{
+				[]byte(`c:41,bb`),
+			},
+			true,
+		},
+		{
+			"valid coord",
+			fields{},
+			&Value{
+				kind: HaystackTypeCoord,
+				coord: struct {
+					long float32
+					lat  float32
+				}{
+					lat:  41,
+					long: 42,
+				},
+			},
+			args{
+				[]byte(`c:41,42`),
+			},
+			false,
+		},
+		{
+			"Xstr (Not implemented)",
+			fields{},
+			&Value{},
+			args{
+				[]byte(`x:41,42`),
+			},
+			true,
 		},
 		// TODO: Add test cases.
 	}

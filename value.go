@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -71,6 +72,27 @@ type Value struct {
 }
 
 func (v *Value) unmarshalJSONNotString(b []byte) error {
+	var list []*Value
+	err := json.Unmarshal(b, &list)
+	if err == nil {
+		v.kind = HaystackTypeList
+		v.list = list
+		return nil
+	}
+	var dict map[string]*Value
+	err = json.Unmarshal(b, &dict)
+	if err == nil {
+		v.kind = HaystackTypeDict
+		v.dict = dict
+		return nil
+	}
+	var boolean bool
+	err = json.Unmarshal(b, &boolean)
+	if err == nil {
+		v.kind = HaystackTypeBool
+		v.b = boolean
+		return nil
+	}
 	return errors.New("not implemented")
 }
 
@@ -88,13 +110,68 @@ func (v *Value) unmarshalJSONString(b []byte) error {
 		v.kind = HaystackTypeRemove
 	case `z`:
 		v.kind = HaystackTypeNA
+	case "n":
+		elements := strings.Fields(res[3])
+		f, err := strconv.ParseFloat(elements[0], 32)
+		if err != nil {
+			return err
+		}
+		var unit string
+		if len(elements) > 2 {
+			return errors.New("wrong entry for number, too many elements")
+		}
+		if len(elements) > 1 {
+			unit = elements[1]
+			v.number.unit = &unit
+		}
+		v.kind = HaystackTypeNumber
+		v.number.value = float32(f)
+	case `d`:
+		t, err := time.Parse("2006-01-02", res[3])
+		if err != nil {
+			return err
+		}
+		v.kind = HaystackTypeDate
+		v.t = t
+	case `h`:
+		t, err := time.Parse("2006-01-02 15:04:05 +0000 UTC", "1970-01-01 "+res[3]+" +0000 UTC")
+		if err != nil {
+			return err
+		}
+		v.kind = HaystackTypeTime
+		v.t = t
+	case `t`:
+		// TODO: handle extra location
+		t, err := time.Parse(time.RFC3339, res[3])
+		if err != nil {
+			return err
+		}
+		v.kind = HaystackTypeDateTime
+		v.t = t
+	case `u`:
+		u, err := url.Parse(res[3])
+		if err != nil {
+			return err
+		}
+		v.kind = HaystackTypeURI
+		v.u = u
+	case `c`:
+		elements := strings.Split(res[3], ",")
+		if len(elements) != 2 {
+			return errors.New("bad coordinates, expected lat,long")
+		}
+		lat, err := strconv.ParseFloat(elements[0], 32)
+		if err != nil {
+			return err
+		}
+		long, err := strconv.ParseFloat(elements[1], 32)
+		if err != nil {
+			return err
+		}
+		v.kind = HaystackTypeCoord
+		v.coord.lat = float32(lat)
+		v.coord.long = float32(long)
 		/*
-			case `n`:
-			case `d`:
-			case `h`:
-			case `t`:
-			case `u`:
-			case `c`:
 			case `x`:
 		*/
 	case `s`:
