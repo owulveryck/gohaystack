@@ -501,6 +501,10 @@ func TestNewURL(t *testing.T) {
 }
 
 func TestValue_unmarshalJSONString(t *testing.T) {
+	bladibla := `bladibla`
+	bladiblablabla := `bladibla blabla`
+	bladiblas := `blablas:bladibla blabla`
+	bladiblaRef := HaystackID(`bladibla`)
 	type fields struct {
 		kind   Kind
 		str    *string
@@ -524,14 +528,19 @@ func TestValue_unmarshalJSONString(t *testing.T) {
 		b []byte
 	}
 	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		wantErr bool
+		name     string
+		fields   fields
+		expected *Value
+		args     args
+		wantErr  bool
 	}{
 		{
 			"string without marker",
 			fields{},
+			&Value{
+				kind: HaystackTypeStr,
+				str:  &bladibla,
+			},
 			args{
 				[]byte(`bladibla`),
 			},
@@ -540,6 +549,10 @@ func TestValue_unmarshalJSONString(t *testing.T) {
 		{
 			"string with marker",
 			fields{},
+			&Value{
+				kind: HaystackTypeStr,
+				str:  &bladibla,
+			},
 			args{
 				[]byte(`s:bladibla`),
 			},
@@ -548,6 +561,10 @@ func TestValue_unmarshalJSONString(t *testing.T) {
 		{
 			"string with marker",
 			fields{},
+			&Value{
+				kind: HaystackTypeStr,
+				str:  &bladiblablabla,
+			},
 			args{
 				[]byte(`s:bladibla blabla`),
 			},
@@ -556,16 +573,57 @@ func TestValue_unmarshalJSONString(t *testing.T) {
 		{
 			"string with marker",
 			fields{},
+			&Value{
+				kind: HaystackTypeStr,
+				str:  &bladiblas,
+			},
 			args{
 				[]byte(`blablas:bladibla blabla`),
 			},
 			false,
 		},
 		{
+			"marker",
+			fields{},
+			&Value{
+				kind: HaystackTypeMarker,
+			},
+			args{
+				[]byte(`m:`),
+			},
+			false,
+		},
+		{
 			"reference",
 			fields{},
+			&Value{
+				kind: HaystackTypeRef,
+				ref:  &bladiblaRef,
+			},
 			args{
 				[]byte(`r:bladibla`),
+			},
+			false,
+		},
+		{
+			"remove",
+			fields{},
+			&Value{
+				kind: HaystackTypeRemove,
+			},
+			args{
+				[]byte(`-:`),
+			},
+			false,
+		},
+		{
+			"na",
+			fields{},
+			&Value{
+				kind: HaystackTypeNA,
+			},
+			args{
+				[]byte(`z:`),
 			},
 			false,
 		},
@@ -588,6 +646,9 @@ func TestValue_unmarshalJSONString(t *testing.T) {
 			}
 			if err := v.unmarshalJSONString(tt.args.b); (err != nil) != tt.wantErr {
 				t.Errorf("Value.unmarshalJSONString() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			if !reflect.DeepEqual(tt.expected, v) {
+				t.Errorf("Value.MarshalJSON() = %v, want %v", v, tt.expected)
 			}
 		})
 	}

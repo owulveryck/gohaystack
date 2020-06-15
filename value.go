@@ -10,6 +10,7 @@ import (
 	"time"
 )
 
+// Kind is a supported type for a haystack value
 type Kind int
 
 // Unit represents a unit is a number
@@ -74,28 +75,41 @@ func (v *Value) unmarshalJSONNotString(b []byte) error {
 }
 
 func (v *Value) unmarshalJSONString(b []byte) error {
-	re := regexp.MustCompile(`^(([srmu]):)?(.*)$`)
+	re := regexp.MustCompile(`^(([m\-znrsdhtucx]):)?(.*)$`)
 	res := re.FindStringSubmatch(string(b))
 	switch res[2] {
 	case ``:
 		v.kind = HaystackTypeStr
 		val := res[3]
 		v.str = &val
-		return nil
+	case `m`:
+		v.kind = HaystackTypeMarker
+	case `-`:
+		v.kind = HaystackTypeRemove
+	case `z`:
+		v.kind = HaystackTypeNA
+		/*
+			case `n`:
+			case `d`:
+			case `h`:
+			case `t`:
+			case `u`:
+			case `c`:
+			case `x`:
+		*/
 	case `s`:
 		v.kind = HaystackTypeStr
 		val := res[3]
 		v.str = &val
-		return nil
 	case `r`:
 		v.kind = HaystackTypeRef
 		val := res[3]
 		id := HaystackID(val)
 		v.ref = &id
-		return nil
 	default:
 		return errors.New("not implemented")
 	}
+	return nil
 }
 
 // UnmarshalJSON extract a value from b
