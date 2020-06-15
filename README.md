@@ -24,39 +24,58 @@ As stated in the web site
 
 This library is rather incomplete, as I am using it only for testing purpose (discovering haystack, building a sample server, and transform data from a format to another)
 This library has a `Grid` structure that can be (de)serialized to and from haystack format in JSON (no zinc yet).
-The `Grid` structure supports a couple of methods to add rows, and columns, and also a basic and inefficient search mechanism.
+The `Grid`  hold an array of `Entity`.
+An `Entity` has an `id` (format `HaystackID` which is a pointer to a string) a `Dis` field (a string used for display purpose) and a hash map of tags.
+
+a tag is a composition of a `*Label` and a `*Value`
 
 Please, see the API documentation for more information.
 
-It also supports a special type `Tag` to make conversion easier from the Go'internal typed elements and haystack's typed elements.
+| Haystack kind | JSON Serialize | JSON Deserialize | Zinc Serialize | Zinc Deserialize |
+|---------------|----------------|------------------|----------------|------------------|
+| Grid          | x              | x                |                |                  |
+| List          | x              | x                |                |                  |
+| Dict          | x              | x                |                |                  |
+| Null          | x              | x                |                |                  |
+| Bool          | x              | x                |                |                  |
+| Marker        | x              | x                |                |                  |
+| Remove        | x              | x                |                |                  |
+| NA            | x              | x                |                |                  |
+| Number        | x              | x                |                |                  |
+| Ref           | x              | x                |                |                  |
+| Str           | x              | x                |                |                  |
+| Date          | x              | x                |                |                  |
+| Time          | x              | x                |                |                  |
+| DateTime      | x              | x                |                |                  |
+| URI           | x              | x                |                |                  |
+| Coord         | x              | x                |                |                  |
+| Xstr          |                |                  |                |                  |
 
 ## Example
 
 ### Basic example
 
-Generate a grid and add values:
+Generate a grid and add simple values:
 
 ```go
-testGrid := NewGrid()
-testGrid.AddColumn("col1", "la colonne 1 (string)")
-testGrid.AddColumn("col2", "")
-testGrid.AddColumn("col3", "array")
-testGrid.AddColumn("col4", "")
-err := testGrid.AddRow([]*Tag{
-    NewTag(HaystackTypeStr, "bla"),
-    NewTag(HaystackTypeStr, "blo"),
-    NewTag(HaystackTypeStr, "blu"),
-    NewTag(HaystackTypeStr, "bli"),
-})
+g := NewGrid()
+myTagLabel := NewLabel("mytag")
+myTagSite := NewLabel("site")
+myTagLabel.Display = "the display"
+mySite := NewHaystackID("myreference")
+entity := g.NewEntity(mySite)
+myTagValue := NewStr("foo")
+entity.SetTag(myTagLabel, myTagValue)
+entity.SetTag(myTagSite, MarkerValue)
 ```
 
 ### JSON
 
 Generate a grid from a json payload:
 ```go
-gridDB := grid.NewGrid()
+g := grid.NewGrid()
 dec := json.NewDecoder(os.Stdin)
-err := dec.Decode(&gridDB)
+err := dec.Decode(&g)
 if err != nil {
     log.Fatal(err)
 }

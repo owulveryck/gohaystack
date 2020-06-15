@@ -77,7 +77,7 @@ func TestGrid_UnmarshalJSON(t *testing.T) {
 					"ver": "3.0",
 				},
 				entities: []*Entity{
-					&Entity{
+					{
 						id: NewHaystackID("myid"),
 						/*
 							tags: map[*Label]*Value{
@@ -102,10 +102,10 @@ func TestGrid_UnmarshalJSON(t *testing.T) {
 					"ver": "3.0",
 				},
 				entities: []*Entity{
-					&Entity{
+					{
 						id: NewHaystackID("myid"),
 						tags: map[*Label]*Value{
-							&Label{Value: "blabla"}: &Value{
+							{Value: "blabla"}: {
 								kind: HaystackTypeStr,
 								str:  &blabla,
 							},

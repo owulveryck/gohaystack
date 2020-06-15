@@ -1,6 +1,7 @@
 package gohaystack
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -74,6 +75,33 @@ func TestEntity_SetTag(t *testing.T) {
 				tags: tt.fields.tags,
 			}
 			e.SetTag(tt.args.l, tt.args.v)
+		})
+	}
+}
+
+func TestEntity_GetTags(t *testing.T) {
+	type fields struct {
+		id   *HaystackID
+		Dis  string
+		tags map[*Label]*Value
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   map[*Label]*Value
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			e := &Entity{
+				id:   tt.fields.id,
+				Dis:  tt.fields.Dis,
+				tags: tt.fields.tags,
+			}
+			if got := e.GetTags(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Entity.GetTags() = %v, want %v", got, tt.want)
+			}
 		})
 	}
 }
