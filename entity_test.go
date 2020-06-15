@@ -90,6 +90,15 @@ func TestEntity_GetTags(t *testing.T) {
 		fields fields
 		want   map[*Label]*Value
 	}{
+		{
+			"simple",
+			fields{
+				id:   nil,
+				Dis:  "",
+				tags: map[*Label]*Value{},
+			},
+			map[*Label]*Value{},
+		},
 		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
