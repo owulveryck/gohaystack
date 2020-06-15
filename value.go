@@ -79,6 +79,13 @@ func (v *Value) unmarshalJSONNotString(b []byte) error {
 		v.list = list
 		return nil
 	}
+	var g Grid
+	err = json.Unmarshal(b, &g)
+	if err == nil {
+		v.kind = HaystackTypeGrid
+		v.g = &g
+		return nil
+	}
 	var dict map[string]*Value
 	err = json.Unmarshal(b, &dict)
 	if err == nil {
@@ -93,14 +100,6 @@ func (v *Value) unmarshalJSONNotString(b []byte) error {
 		v.b = boolean
 		return nil
 	}
-	var g Grid
-	err = json.Unmarshal(b, &g)
-	if err == nil {
-		v.kind = HaystackTypeGrid
-		v.g = &g
-		return nil
-	}
-
 	return errors.New("not implemented")
 }
 
@@ -150,7 +149,21 @@ func (v *Value) unmarshalJSONString(b []byte) error {
 		v.t = t
 	case `t`:
 		// TODO: handle extra location
-		t, err := time.Parse(time.RFC3339, res[3])
+		elements := strings.Fields(res[3])
+		if len(elements) == 2 {
+			loc, err := time.LoadLocation(elements[1])
+			if err != nil {
+				return err
+			}
+			t, err := time.ParseInLocation(time.RFC3339, elements[0], loc)
+			if err != nil {
+				return err
+			}
+			v.kind = HaystackTypeDateTime
+			v.t = t.In(loc)
+			return nil
+		}
+		t, err := time.Parse(time.RFC3339, elements[0])
 		if err != nil {
 			return err
 		}

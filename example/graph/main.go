@@ -2,18 +2,12 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log"
 	"os"
-	"regexp"
 
 	"encoding/json"
 
 	"github.com/owulveryck/gohaystack"
-	"gonum.org/v1/gonum/graph"
-	"gonum.org/v1/gonum/graph/encoding"
-	"gonum.org/v1/gonum/graph/encoding/dot"
-	"gonum.org/v1/gonum/graph/simple"
 )
 
 var maxnodes = flag.Int("maxnodes", 0, "maximum nodes to add to the graph (0 for all)")
@@ -27,20 +21,24 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	g := newGraphHandler(gridDB)
-	err = g.addNodes()
-	if err != nil {
-		log.Fatal(err)
-	}
-	g.addEdges()
+	log.Println(gridDB)
+	/*
+		g := newGraphHandler(gridDB)
+		err = g.addNodes()
+		if err != nil {
+			log.Fatal(err)
+		}
+		g.addEdges()
 
-	result, err := dot.Marshal(g.graph, "", "", "  ")
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Print(string(result))
+		result, err := dot.Marshal(g.graph, "", "", "  ")
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Print(string(result))
+	*/
 }
 
+/*
 var cols []string
 
 type graphHandler struct {
@@ -203,3 +201,4 @@ func newEdge(from, to graph.Node, fromPort, toPort string) edgeWithPorts {
 		toPort:   toPort,
 	}
 }
+*/

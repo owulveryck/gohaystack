@@ -616,6 +616,16 @@ func TestValue_unmarshalJSONString(t *testing.T) {
 	kwh := `kwh`
 	date := time.Date(1970, time.January, 01, 00, 00, 00, 00, time.UTC)
 	u, _ := url.Parse("http://bing.com/search?q=dotnet")
+	tz := "Asia/Shanghai"
+	var testTZData []byte
+	testTZ, err := time.LoadLocation(tz)
+	if err != nil {
+		testTZ = time.UTC
+		testTZData = []byte(`t:1970-01-01T00:00:00+00:00 UTC`)
+	} else {
+		testTZData = []byte(`t:1970-01-01T00:00:00+08:00 ` + tz)
+	}
+	dateTZ := time.Date(1970, time.January, 01, 00, 00, 00, 00, testTZ)
 	type fields struct {
 		kind   Kind
 		str    *string
@@ -874,15 +884,30 @@ func TestValue_unmarshalJSONString(t *testing.T) {
 		{
 			"valid datetime with tz",
 			fields{},
-			&Value{},
-			/*
-				&Value{
-					kind: HaystackTypeDateTime,
-					t:    date,
-				},
-			*/
+			&Value{
+				kind: HaystackTypeDateTime,
+				t:    dateTZ,
+			},
 			args{
-				[]byte(`t:1970-01-01T00:00:00-04:00 New_York`),
+				testTZData,
+			},
+			false,
+		},
+		{
+			"valid datetime with invalid tz",
+			fields{},
+			&Value{},
+			args{
+				[]byte(`t:1970-01-01T00:00:00-00:00 NOWHERE`),
+			},
+			true,
+		},
+		{
+			"invalid datetime with valid tz",
+			fields{},
+			&Value{},
+			args{
+				[]byte(`t:19.070-01-01T00:00:00-00:00 UTC`),
 			},
 			true,
 		},
@@ -991,6 +1016,8 @@ func TestValue_unmarshalJSONString(t *testing.T) {
 				t.Errorf("Value.unmarshalJSONString() error = %v, wantErr %v", err, tt.wantErr)
 			}
 			if !reflect.DeepEqual(tt.expected, v) {
+				t.Log(v.t.Location())
+				t.Log(tt.expected.t.Location())
 				t.Errorf("Value.MarshalJSON() = %v, want %v", v, tt.expected)
 			}
 		})
