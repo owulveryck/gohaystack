@@ -1083,3 +1083,75 @@ func TestValue_GetKind(t *testing.T) {
 		})
 	}
 }
+
+func TestValue_GetHaystackID(t *testing.T) {
+	myid := HaystackID("bla")
+	type fields struct {
+		kind   Kind
+		str    *string
+		number struct {
+			value float32
+			unit  Unit
+		}
+		b     bool
+		t     time.Time
+		u     *url.URL
+		ref   *HaystackID
+		g     *Grid
+		dict  map[string]*Value
+		list  []*Value
+		coord struct {
+			long float32
+			lat  float32
+		}
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		want    *HaystackID
+		wantErr bool
+	}{
+		{
+			"not a ref",
+			fields{
+				kind: HaystackLastType,
+			},
+			nil,
+			true,
+		},
+		{
+			"valid ref",
+			fields{
+				kind: HaystackTypeRef,
+				ref:  &myid,
+			},
+			&myid,
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			v := &Value{
+				kind:   tt.fields.kind,
+				str:    tt.fields.str,
+				number: tt.fields.number,
+				b:      tt.fields.b,
+				t:      tt.fields.t,
+				u:      tt.fields.u,
+				ref:    tt.fields.ref,
+				g:      tt.fields.g,
+				dict:   tt.fields.dict,
+				list:   tt.fields.list,
+				coord:  tt.fields.coord,
+			}
+			got, err := v.GetHaystackID()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Value.GetHaystackID() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("Value.GetHaystackID() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

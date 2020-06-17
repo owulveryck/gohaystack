@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"regexp"
 
 	"encoding/json"
 
@@ -31,7 +32,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	gr.addEdges()
 
 	result, err := dot.Marshal(gr.graph, "", "", "  ")
 	if err != nil {
@@ -73,14 +73,12 @@ func (n *node) Attributes() []encoding.Attribute {
 type graphHandler struct {
 	graph *simple.UndirectedGraph
 	grid  *gohaystack.Grid
-	refs  []*gohaystack.Label // Hold all of the labels sometingRef
 }
 
 func newGraphHandler(g *gohaystack.Grid) *graphHandler {
 	return &graphHandler{
 		graph: simple.NewUndirectedGraph(),
 		grid:  g,
-		refs:  make([]*gohaystack.Label, 0),
 	}
 }
 
@@ -143,21 +141,41 @@ func newEdge(from, to graph.Node, fromPort, toPort string) edgeWithPorts {
 }
 
 func (gh *graphHandler) addNodes() error {
+	var validRef = regexp.MustCompile(`.*Ref$`)
+	refLabels := make(map[*gohaystack.Label]struct{}, 0)
 	entities := gh.grid.GetEntities()
-	ids := make(map[*gohaystack.HaystackID]int64, len(entities))
+	nodeIDs := make(map[int]*node, len(entities))
+	entityIDs := make(map[*gohaystack.HaystackID]*node, len(entities))
 	for i, entity := range entities {
 		n := &node{
 			id:      int64(i),
 			content: entity,
 		}
-		ids[entity.GetID()] = int64(i)
+		nodeIDs[i] = n
+		entityIDs[entity.GetID()] = n
 		gh.graph.AddNode(n)
+		for k := range entity.GetTags() {
+			if validRef.MatchString(k.Value) {
+				refLabels[k] = struct{}{}
+			}
+		}
 	}
 	// Now generate the edges
-	/*
-		for i, entity := range entities {
+	for i, entity := range entities {
+		for label := range refLabels {
+			if ref, ok := entity.GetTags()[label]; ok {
+				id, err := ref.GetHaystackID()
+				if err != nil {
+					return err
+				}
+				if _, ok := entityIDs[id]; !ok {
+					log.Printf("%v is referencing %v which is not found in the grid", *entity.GetID(), *id)
+					continue
+				}
+				gh.graph.SetEdge(newEdge(nodeIDs[i], entityIDs[id], "", ""))
+			}
 		}
-	*/
+	}
 	return nil
 }
 

@@ -39,22 +39,39 @@ func (g *Grid) UnmarshalJSON(b []byte) error {
 		return errors.New("Unsupported version " + version)
 	}
 	entities := make([]*Entity, 0)
-	for _, e := range temp.Rows {
+	refs := make(map[string]*Value, 0) // This is a dictionary of value/references,
+	// for example:
+	// myID := "myid"
+	// myHaystackID := HaystackID(myID)
+	// myValue := &Value{
+	//	kind: HaystackTypeRef
+	//	ref: myHaystackID
+	// }
+	//
+	// then refs[myID] = myValue
+	for _, row := range temp.Rows {
 		entity := &Entity{
-			tags: make(map[*Label]*Value, len(e)-1),
+			tags: make(map[*Label]*Value, len(row)-1),
 		}
-		if id, ok := e["id"]; ok {
+		if id, ok := row["id"]; ok {
 			if id.kind != HaystackTypeRef {
 				return fmt.Errorf("bad type for id %v (expected ref)", id)
 			}
 			entity.id = id.ref
-			delete(e, "id")
+			refs[string(*id.ref)] = id
+			delete(row, "id")
 		} else {
-			return fmt.Errorf("row does not have any id %v", e)
+			return fmt.Errorf("row does not have any id %v", row)
 		}
-		for k, v := range e {
-			// TODO find label
+		for k, v := range row {
 			if label, ok := labels[k]; ok {
+				// Fix references
+				if v.kind == HaystackTypeRef {
+					// if the reference exists in the grid, link it
+					if _, ok := refs[string(*v.ref)]; ok {
+						v = refs[string(*v.ref)]
+					}
+				}
 				entity.tags[label] = v
 			} else {
 				return fmt.Errorf("bad input: found tag %v in entity that is undeclared", k)
