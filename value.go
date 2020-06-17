@@ -288,6 +288,14 @@ var MarkerValue = &Value{
 	kind: HaystackTypeMarker,
 }
 
+// GetHaystackID Returns the underlying value of the reference
+func (v *Value) GetHaystackID() (*HaystackID, error) {
+	if v.kind != HaystackTypeRef {
+		return nil, errors.New("value type is not a ref")
+	}
+	return v.ref, nil
+}
+
 // GetString value; returns an error if the underlying type is not an haystack string
 func (v *Value) GetString() (string, error) {
 	if v.kind != HaystackTypeStr {
