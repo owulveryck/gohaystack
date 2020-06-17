@@ -8,11 +8,13 @@ package tags holds pre-instantiated  variables with official tags of the haystac
 func ExampleMarker() {
 	g := gohaystack.NewGrid()
 	id := gohaystack.NewHaystackID("myid")
-	entity := g.NewEntity(id)
+	firstEntity := g.NewEntity(id)
+	secondEntity := g.NewEntity(id)
 	//  Set the Site tag as a marker tag
-	entity.SetTag(Site())
+    firstEntity.SetTag(Site())
+    // or do it with the label
+    firstEntity.SetTag(SiteLabel, gohaystack.MarkerValue)
 	enc := json.NewEncoder(os.Stdout)
 	enc.Encode(g)
-	// output: {"meta":{"Ver":"3.0"},"cols":[{"name":"site"}],"rows":[{"id":"r:myid","site":"m:"}]}
 }
 ```
