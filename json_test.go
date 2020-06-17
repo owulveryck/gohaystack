@@ -9,6 +9,8 @@ import (
 
 func TestGrid_UnmarshalJSON(t *testing.T) {
 	blabla := "blabla"
+	myID := NewHaystackID("myid")
+	myID2 := NewHaystackID("myid2")
 	type fields struct {
 		Meta     map[string]string
 		entities []*Entity
@@ -118,6 +120,39 @@ func TestGrid_UnmarshalJSON(t *testing.T) {
 			},
 			false,
 		},
+		{
+			"id ok and two entities with references",
+			fields{
+				Meta: map[string]string{
+					"ver": "3.0",
+				},
+				entities: []*Entity{
+					{
+						id: myID,
+						tags: map[*Label]*Value{
+							{Value: "blabla"}: {
+								kind: HaystackTypeStr,
+								str:  &blabla,
+							},
+						},
+					},
+					{
+						id: myID2,
+						tags: map[*Label]*Value{
+							{Value: "somethingRef"}: {
+								kind: HaystackTypeRef,
+								ref:  myID,
+							},
+						},
+					},
+				},
+			},
+			args{
+				[]byte(`{"meta":{"ver":"3.0"}, "cols":[{"name": "blabla"},{"name": "somethingRef"}],"rows":[{"id":"r:myid","blabla":"blabla"},{"id":"r:myid2","somethingRef":"r:myid"}]}`),
+			},
+			false,
+		},
+
 		{
 			"Undeclared label",
 			fields{},
