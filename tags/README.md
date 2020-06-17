@@ -1,3 +1,5 @@
+[![GoDoc](https://godoc.org/github.com/owulveryck/gohaystack/tags?status.svg)](https://pkg.go.dev/github.com/owulveryck/gohaystack/tags?tab=doc)
+
 # package tags
 
 package tags holds pre-instantiated  variables with official tags of the haystack-project
