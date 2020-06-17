@@ -51,6 +51,10 @@ Please, see the API documentation for more information.
 | Coord         | x              | x                |                |                  |
 | Xstr          |                |                  |                |                  |
 
+## Haystack tags package
+
+the [`tags`](tags) subpackage contains the label and values definitions of the official haystack project tag list. This package is a commodity.
+
 ## Example
 
 ### Basic example
