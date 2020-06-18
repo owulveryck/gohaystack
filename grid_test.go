@@ -107,3 +107,82 @@ func TestGrid_GetEntities(t *testing.T) {
 		})
 	}
 }
+
+func TestGrid_GetEntityByID(t *testing.T) {
+	id1 := NewHaystackID("id1")
+	id2 := NewHaystackID("id2")
+	id3 := NewHaystackID("id3")
+	id4 := NewHaystackID("id1")
+	entity1 := &Entity{id: id1}
+	entity2 := &Entity{id: id2}
+	entity3 := &Entity{id: id3}
+	entity4 := &Entity{id: id1}
+	type fields struct {
+		Meta     map[string]string
+		entities []*Entity
+	}
+	type args struct {
+		id *HaystackID
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   *Entity
+	}{
+		{
+			"nil return",
+			fields{
+				entities: []*Entity{
+					entity1,
+					entity2,
+					entity3,
+				},
+			},
+			args{
+				id4,
+			},
+			nil,
+		},
+		{
+			"one entity match return",
+			fields{
+				entities: []*Entity{
+					entity1,
+					entity2,
+					entity3,
+				},
+			},
+			args{
+				id1,
+			},
+			entity1,
+		},
+		{
+			"one entity match return",
+			fields{
+				entities: []*Entity{
+					entity1,
+					entity2,
+					entity3,
+					entity4,
+				},
+			},
+			args{
+				id1,
+			},
+			entity1,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			g := &Grid{
+				Meta:     tt.fields.Meta,
+				entities: tt.fields.entities,
+			}
+			if got := g.GetEntityByID(tt.args.id); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Grid.GetEntityByID() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
