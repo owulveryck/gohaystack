@@ -16,6 +16,18 @@ func NewGrid() *Grid {
 	}
 }
 
+// GetEntityByID returns the entity identified by id, or nil if nothing is found
+// if a grid has two elements with the same ID (there is no fence to protect from that),
+// only the first one is returned
+func (g *Grid) GetEntityByID(id *HaystackID) *Entity {
+	for _, entity := range g.entities {
+		if entity.GetID() == id {
+			return entity
+		}
+	}
+	return nil
+}
+
 // GetEntities from the grid
 func (g *Grid) GetEntities() []*Entity {
 	return g.entities
