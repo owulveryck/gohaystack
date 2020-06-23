@@ -4,465 +4,465 @@ import "github.com/owulveryck/gohaystack"
 
 var (
 	// AbsorptionLabel https://project-haystack.org/tag/absorption
-	AbsorptionLabel = gohaystack.NewLabel("absorption")
+	AbsorptionLabel = labelDB["absorption"]
 	// AcLabel https://project-haystack.org/tag/ac
-	AcLabel = gohaystack.NewLabel("ac")
+	AcLabel = labelDB["ac"]
 	// ActiveLabel https://project-haystack.org/tag/active
-	ActiveLabel = gohaystack.NewLabel("active")
+	ActiveLabel = labelDB["active"]
 	// AhuLabel https://project-haystack.org/tag/ahu
-	AhuLabel = gohaystack.NewLabel("ahu")
+	AhuLabel = labelDB["ahu"]
 	// AhuRefLabel https://project-haystack.org/tag/ahuRef
-	AhuRefLabel = gohaystack.NewLabel("ahuRef")
+	AhuRefLabel = labelDB["ahuRef"]
 	// AirLabel https://project-haystack.org/tag/air
-	AirLabel = gohaystack.NewLabel("air")
+	AirLabel = labelDB["air"]
 	// AirCooledLabel https://project-haystack.org/tag/airCooled
-	AirCooledLabel = gohaystack.NewLabel("airCooled")
+	AirCooledLabel = labelDB["airCooled"]
 	// AngleLabel https://project-haystack.org/tag/angle
-	AngleLabel = gohaystack.NewLabel("angle")
+	AngleLabel = labelDB["angle"]
 	// ApparentLabel https://project-haystack.org/tag/apparent
-	ApparentLabel = gohaystack.NewLabel("apparent")
+	ApparentLabel = labelDB["apparent"]
 	// AreaLabel https://project-haystack.org/tag/area
-	AreaLabel = gohaystack.NewLabel("area")
+	AreaLabel = labelDB["area"]
 	// AvgLabel https://project-haystack.org/tag/avg
-	AvgLabel = gohaystack.NewLabel("avg")
+	AvgLabel = labelDB["avg"]
 	// BarometricLabel https://project-haystack.org/tag/barometric
-	BarometricLabel = gohaystack.NewLabel("barometric")
+	BarometricLabel = labelDB["barometric"]
 	// BlowdownLabel https://project-haystack.org/tag/blowdown
-	BlowdownLabel = gohaystack.NewLabel("blowdown")
+	BlowdownLabel = labelDB["blowdown"]
 	// BoilerLabel https://project-haystack.org/tag/boiler
-	BoilerLabel = gohaystack.NewLabel("boiler")
+	BoilerLabel = labelDB["boiler"]
 	// BypassLabel https://project-haystack.org/tag/bypass
-	BypassLabel = gohaystack.NewLabel("bypass")
+	BypassLabel = labelDB["bypass"]
 	// CentrifugalLabel https://project-haystack.org/tag/centrifugal
-	CentrifugalLabel = gohaystack.NewLabel("centrifugal")
+	CentrifugalLabel = labelDB["centrifugal"]
 	// ChilledLabel https://project-haystack.org/tag/chilled
-	ChilledLabel = gohaystack.NewLabel("chilled")
+	ChilledLabel = labelDB["chilled"]
 	// ChilledBeamZoneLabel https://project-haystack.org/tag/chilledBeamZone
-	ChilledBeamZoneLabel = gohaystack.NewLabel("chilledBeamZone")
+	ChilledBeamZoneLabel = labelDB["chilledBeamZone"]
 	// ChilledWaterCoolLabel https://project-haystack.org/tag/chilledWaterCool
-	ChilledWaterCoolLabel = gohaystack.NewLabel("chilledWaterCool")
+	ChilledWaterCoolLabel = labelDB["chilledWaterCool"]
 	// ChilledWaterPlantLabel https://project-haystack.org/tag/chilledWaterPlant
-	ChilledWaterPlantLabel = gohaystack.NewLabel("chilledWaterPlant")
+	ChilledWaterPlantLabel = labelDB["chilledWaterPlant"]
 	// ChilledWaterPlantRefLabel https://project-haystack.org/tag/chilledWaterPlantRef
-	ChilledWaterPlantRefLabel = gohaystack.NewLabel("chilledWaterPlantRef")
+	ChilledWaterPlantRefLabel = labelDB["chilledWaterPlantRef"]
 	// ChillerLabel https://project-haystack.org/tag/chiller
-	ChillerLabel = gohaystack.NewLabel("chiller")
+	ChillerLabel = labelDB["chiller"]
 	// CircLabel https://project-haystack.org/tag/circ
-	CircLabel = gohaystack.NewLabel("circ")
+	CircLabel = labelDB["circ"]
 	// CircuitLabel https://project-haystack.org/tag/circuit
-	CircuitLabel = gohaystack.NewLabel("circuit")
+	CircuitLabel = labelDB["circuit"]
 	// ClosedLoopLabel https://project-haystack.org/tag/closedLoop
-	ClosedLoopLabel = gohaystack.NewLabel("closedLoop")
+	ClosedLoopLabel = labelDB["closedLoop"]
 	// CloudageLabel https://project-haystack.org/tag/cloudage
-	CloudageLabel = gohaystack.NewLabel("cloudage")
+	CloudageLabel = labelDB["cloudage"]
 	// CmdLabel https://project-haystack.org/tag/cmd
-	CmdLabel = gohaystack.NewLabel("cmd")
+	CmdLabel = labelDB["cmd"]
 	// CoLabel https://project-haystack.org/tag/co
-	CoLabel = gohaystack.NewLabel("co")
+	CoLabel = labelDB["co"]
 	// Co2Label https://project-haystack.org/tag/co2
-	Co2Label = gohaystack.NewLabel("co2")
+	Co2Label = labelDB["co2"]
 	// ColdDeckLabel https://project-haystack.org/tag/coldDeck
-	ColdDeckLabel = gohaystack.NewLabel("coldDeck")
+	ColdDeckLabel = labelDB["coldDeck"]
 	// CondensateLabel https://project-haystack.org/tag/condensate
-	CondensateLabel = gohaystack.NewLabel("condensate")
+	CondensateLabel = labelDB["condensate"]
 	// CondenserLabel https://project-haystack.org/tag/condenser
-	CondenserLabel = gohaystack.NewLabel("condenser")
+	CondenserLabel = labelDB["condenser"]
 	// ConnectionLabel https://project-haystack.org/tag/connection
-	ConnectionLabel = gohaystack.NewLabel("connection")
+	ConnectionLabel = labelDB["connection"]
 	// ConstantVolumeLabel https://project-haystack.org/tag/constantVolume
-	ConstantVolumeLabel = gohaystack.NewLabel("constantVolume")
+	ConstantVolumeLabel = labelDB["constantVolume"]
 	// CoolLabel https://project-haystack.org/tag/cool
-	CoolLabel = gohaystack.NewLabel("cool")
+	CoolLabel = labelDB["cool"]
 	// CoolOnlyLabel https://project-haystack.org/tag/coolOnly
-	CoolOnlyLabel = gohaystack.NewLabel("coolOnly")
+	CoolOnlyLabel = labelDB["coolOnly"]
 	// CoolingLabel https://project-haystack.org/tag/cooling
-	CoolingLabel = gohaystack.NewLabel("cooling")
+	CoolingLabel = labelDB["cooling"]
 	// CoolingCapacityLabel https://project-haystack.org/tag/coolingCapacity
-	CoolingCapacityLabel = gohaystack.NewLabel("coolingCapacity")
+	CoolingCapacityLabel = labelDB["coolingCapacity"]
 	// CoolingTowerLabel https://project-haystack.org/tag/coolingTower
-	CoolingTowerLabel = gohaystack.NewLabel("coolingTower")
+	CoolingTowerLabel = labelDB["coolingTower"]
 	// CurLabel https://project-haystack.org/tag/cur
-	CurLabel = gohaystack.NewLabel("cur")
+	CurLabel = labelDB["cur"]
 	// CurErrLabel https://project-haystack.org/tag/curErr
-	CurErrLabel = gohaystack.NewLabel("curErr")
+	CurErrLabel = labelDB["curErr"]
 	// CurStatusLabel https://project-haystack.org/tag/curStatus
-	CurStatusLabel = gohaystack.NewLabel("curStatus")
+	CurStatusLabel = labelDB["curStatus"]
 	// CurValLabel https://project-haystack.org/tag/curVal
-	CurValLabel = gohaystack.NewLabel("curVal")
+	CurValLabel = labelDB["curVal"]
 	// CurrentLabel https://project-haystack.org/tag/current
-	CurrentLabel = gohaystack.NewLabel("current")
+	CurrentLabel = labelDB["current"]
 	// DamperLabel https://project-haystack.org/tag/damper
-	DamperLabel = gohaystack.NewLabel("damper")
+	DamperLabel = labelDB["damper"]
 	// DcLabel https://project-haystack.org/tag/dc
-	DcLabel = gohaystack.NewLabel("dc")
+	DcLabel = labelDB["dc"]
 	// DeltaLabel https://project-haystack.org/tag/delta
-	DeltaLabel = gohaystack.NewLabel("delta")
+	DeltaLabel = labelDB["delta"]
 	// DeviceLabel https://project-haystack.org/tag/device
-	DeviceLabel = gohaystack.NewLabel("device")
+	DeviceLabel = labelDB["device"]
 	// Device1RefLabel https://project-haystack.org/tag/device1Ref
-	Device1RefLabel = gohaystack.NewLabel("device1Ref")
+	Device1RefLabel = labelDB["device1Ref"]
 	// Device2RefLabel https://project-haystack.org/tag/device2Ref
-	Device2RefLabel = gohaystack.NewLabel("device2Ref")
+	Device2RefLabel = labelDB["device2Ref"]
 	// DewLabel https://project-haystack.org/tag/dew
-	DewLabel = gohaystack.NewLabel("dew")
+	DewLabel = labelDB["dew"]
 	// DirectZoneLabel https://project-haystack.org/tag/directZone
-	DirectZoneLabel = gohaystack.NewLabel("directZone")
+	DirectZoneLabel = labelDB["directZone"]
 	// DirectionLabel https://project-haystack.org/tag/direction
-	DirectionLabel = gohaystack.NewLabel("direction")
+	DirectionLabel = labelDB["direction"]
 	// DisLabel https://project-haystack.org/tag/dis
-	DisLabel = gohaystack.NewLabel("dis")
+	DisLabel = labelDB["dis"]
 	// DischargeLabel https://project-haystack.org/tag/discharge
-	DischargeLabel = gohaystack.NewLabel("discharge")
+	DischargeLabel = labelDB["discharge"]
 	// DivertingLabel https://project-haystack.org/tag/diverting
-	DivertingLabel = gohaystack.NewLabel("diverting")
+	DivertingLabel = labelDB["diverting"]
 	// DomesticLabel https://project-haystack.org/tag/domestic
-	DomesticLabel = gohaystack.NewLabel("domestic")
+	DomesticLabel = labelDB["domestic"]
 	// DualDuctLabel https://project-haystack.org/tag/dualDuct
-	DualDuctLabel = gohaystack.NewLabel("dualDuct")
+	DualDuctLabel = labelDB["dualDuct"]
 	// DuctAreaLabel https://project-haystack.org/tag/ductArea
-	DuctAreaLabel = gohaystack.NewLabel("ductArea")
+	DuctAreaLabel = labelDB["ductArea"]
 	// DxCoolLabel https://project-haystack.org/tag/dxCool
-	DxCoolLabel = gohaystack.NewLabel("dxCool")
+	DxCoolLabel = labelDB["dxCool"]
 	// EffectiveLabel https://project-haystack.org/tag/effective
-	EffectiveLabel = gohaystack.NewLabel("effective")
+	EffectiveLabel = labelDB["effective"]
 	// EfficiencyLabel https://project-haystack.org/tag/efficiency
-	EfficiencyLabel = gohaystack.NewLabel("efficiency")
+	EfficiencyLabel = labelDB["efficiency"]
 	// ElecLabel https://project-haystack.org/tag/elec
-	ElecLabel = gohaystack.NewLabel("elec")
+	ElecLabel = labelDB["elec"]
 	// ElecHeatLabel https://project-haystack.org/tag/elecHeat
-	ElecHeatLabel = gohaystack.NewLabel("elecHeat")
+	ElecHeatLabel = labelDB["elecHeat"]
 	// ElecMeterLoadLabel https://project-haystack.org/tag/elecMeterLoad
-	ElecMeterLoadLabel = gohaystack.NewLabel("elecMeterLoad")
+	ElecMeterLoadLabel = labelDB["elecMeterLoad"]
 	// ElecMeterRefLabel https://project-haystack.org/tag/elecMeterRef
-	ElecMeterRefLabel = gohaystack.NewLabel("elecMeterRef")
+	ElecMeterRefLabel = labelDB["elecMeterRef"]
 	// ElecPanelLabel https://project-haystack.org/tag/elecPanel
-	ElecPanelLabel = gohaystack.NewLabel("elecPanel")
+	ElecPanelLabel = labelDB["elecPanel"]
 	// ElecPanelOfLabel https://project-haystack.org/tag/elecPanelOf
-	ElecPanelOfLabel = gohaystack.NewLabel("elecPanelOf")
+	ElecPanelOfLabel = labelDB["elecPanelOf"]
 	// ElecReheatLabel https://project-haystack.org/tag/elecReheat
-	ElecReheatLabel = gohaystack.NewLabel("elecReheat")
+	ElecReheatLabel = labelDB["elecReheat"]
 	// EnableLabel https://project-haystack.org/tag/enable
-	EnableLabel = gohaystack.NewLabel("enable")
+	EnableLabel = labelDB["enable"]
 	// EnergyLabel https://project-haystack.org/tag/energy
-	EnergyLabel = gohaystack.NewLabel("energy")
+	EnergyLabel = labelDB["energy"]
 	// EnteringLabel https://project-haystack.org/tag/entering
-	EnteringLabel = gohaystack.NewLabel("entering")
+	EnteringLabel = labelDB["entering"]
 	// EnumLabel https://project-haystack.org/tag/enum
-	EnumLabel = gohaystack.NewLabel("enum")
+	EnumLabel = labelDB["enum"]
 	// EquipLabel https://project-haystack.org/tag/equip
-	EquipLabel = gohaystack.NewLabel("equip")
+	EquipLabel = labelDB["equip"]
 	// EquipRefLabel https://project-haystack.org/tag/equipRef
-	EquipRefLabel = gohaystack.NewLabel("equipRef")
+	EquipRefLabel = labelDB["equipRef"]
 	// EvaporatorLabel https://project-haystack.org/tag/evaporator
-	EvaporatorLabel = gohaystack.NewLabel("evaporator")
+	EvaporatorLabel = labelDB["evaporator"]
 	// ExhaustLabel https://project-haystack.org/tag/exhaust
-	ExhaustLabel = gohaystack.NewLabel("exhaust")
+	ExhaustLabel = labelDB["exhaust"]
 	// ExportLabel https://project-haystack.org/tag/export
-	ExportLabel = gohaystack.NewLabel("export")
+	ExportLabel = labelDB["export"]
 	// FaceBypassLabel https://project-haystack.org/tag/faceBypass
-	FaceBypassLabel = gohaystack.NewLabel("faceBypass")
+	FaceBypassLabel = labelDB["faceBypass"]
 	// FanLabel https://project-haystack.org/tag/fan
-	FanLabel = gohaystack.NewLabel("fan")
+	FanLabel = labelDB["fan"]
 	// FanPoweredLabel https://project-haystack.org/tag/fanPowered
-	FanPoweredLabel = gohaystack.NewLabel("fanPowered")
+	FanPoweredLabel = labelDB["fanPowered"]
 	// FcuLabel https://project-haystack.org/tag/fcu
-	FcuLabel = gohaystack.NewLabel("fcu")
+	FcuLabel = labelDB["fcu"]
 	// FilterLabel https://project-haystack.org/tag/filter
-	FilterLabel = gohaystack.NewLabel("filter")
+	FilterLabel = labelDB["filter"]
 	// FlowLabel https://project-haystack.org/tag/flow
-	FlowLabel = gohaystack.NewLabel("flow")
+	FlowLabel = labelDB["flow"]
 	// FlueLabel https://project-haystack.org/tag/flue
-	FlueLabel = gohaystack.NewLabel("flue")
+	FlueLabel = labelDB["flue"]
 	// FreezeStatLabel https://project-haystack.org/tag/freezeStat
-	FreezeStatLabel = gohaystack.NewLabel("freezeStat")
+	FreezeStatLabel = labelDB["freezeStat"]
 	// FreqLabel https://project-haystack.org/tag/freq
-	FreqLabel = gohaystack.NewLabel("freq")
+	FreqLabel = labelDB["freq"]
 	// GasLabel https://project-haystack.org/tag/gas
-	GasLabel = gohaystack.NewLabel("gas")
+	GasLabel = labelDB["gas"]
 	// GasHeatLabel https://project-haystack.org/tag/gasHeat
-	GasHeatLabel = gohaystack.NewLabel("gasHeat")
+	GasHeatLabel = labelDB["gasHeat"]
 	// GasMeterLoadLabel https://project-haystack.org/tag/gasMeterLoad
-	GasMeterLoadLabel = gohaystack.NewLabel("gasMeterLoad")
+	GasMeterLoadLabel = labelDB["gasMeterLoad"]
 	// GeoAddrLabel https://project-haystack.org/tag/geoAddr
-	GeoAddrLabel = gohaystack.NewLabel("geoAddr")
+	GeoAddrLabel = labelDB["geoAddr"]
 	// GeoCityLabel https://project-haystack.org/tag/geoCity
-	GeoCityLabel = gohaystack.NewLabel("geoCity")
+	GeoCityLabel = labelDB["geoCity"]
 	// GeoCoordLabel https://project-haystack.org/tag/geoCoord
-	GeoCoordLabel = gohaystack.NewLabel("geoCoord")
+	GeoCoordLabel = labelDB["geoCoord"]
 	// GeoCountryLabel https://project-haystack.org/tag/geoCountry
-	GeoCountryLabel = gohaystack.NewLabel("geoCountry")
+	GeoCountryLabel = labelDB["geoCountry"]
 	// GeoCountyLabel https://project-haystack.org/tag/geoCounty
-	GeoCountyLabel = gohaystack.NewLabel("geoCounty")
+	GeoCountyLabel = labelDB["geoCounty"]
 	// GeoPostalCodeLabel https://project-haystack.org/tag/geoPostalCode
-	GeoPostalCodeLabel = gohaystack.NewLabel("geoPostalCode")
+	GeoPostalCodeLabel = labelDB["geoPostalCode"]
 	// GeoStateLabel https://project-haystack.org/tag/geoState
-	GeoStateLabel = gohaystack.NewLabel("geoState")
+	GeoStateLabel = labelDB["geoState"]
 	// GeoStreetLabel https://project-haystack.org/tag/geoStreet
-	GeoStreetLabel = gohaystack.NewLabel("geoStreet")
+	GeoStreetLabel = labelDB["geoStreet"]
 	// HeaderLabel https://project-haystack.org/tag/header
-	HeaderLabel = gohaystack.NewLabel("header")
+	HeaderLabel = labelDB["header"]
 	// HeatLabel https://project-haystack.org/tag/heat
-	HeatLabel = gohaystack.NewLabel("heat")
+	HeatLabel = labelDB["heat"]
 	// HeatExchangerLabel https://project-haystack.org/tag/heatExchanger
-	HeatExchangerLabel = gohaystack.NewLabel("heatExchanger")
+	HeatExchangerLabel = labelDB["heatExchanger"]
 	// HeatPumpLabel https://project-haystack.org/tag/heatPump
-	HeatPumpLabel = gohaystack.NewLabel("heatPump")
+	HeatPumpLabel = labelDB["heatPump"]
 	// HeatWheelLabel https://project-haystack.org/tag/heatWheel
-	HeatWheelLabel = gohaystack.NewLabel("heatWheel")
+	HeatWheelLabel = labelDB["heatWheel"]
 	// HeatingLabel https://project-haystack.org/tag/heating
-	HeatingLabel = gohaystack.NewLabel("heating")
+	HeatingLabel = labelDB["heating"]
 	// HisLabel https://project-haystack.org/tag/his
-	HisLabel = gohaystack.NewLabel("his")
+	HisLabel = labelDB["his"]
 	// HisErrLabel https://project-haystack.org/tag/hisErr
-	HisErrLabel = gohaystack.NewLabel("hisErr")
+	HisErrLabel = labelDB["hisErr"]
 	// HisInterpolateLabel https://project-haystack.org/tag/hisInterpolate
-	HisInterpolateLabel = gohaystack.NewLabel("hisInterpolate")
+	HisInterpolateLabel = labelDB["hisInterpolate"]
 	// HisStatusLabel https://project-haystack.org/tag/hisStatus
-	HisStatusLabel = gohaystack.NewLabel("hisStatus")
+	HisStatusLabel = labelDB["hisStatus"]
 	// HisTotalizedLabel https://project-haystack.org/tag/hisTotalized
-	HisTotalizedLabel = gohaystack.NewLabel("hisTotalized")
+	HisTotalizedLabel = labelDB["hisTotalized"]
 	// HotLabel https://project-haystack.org/tag/hot
-	HotLabel = gohaystack.NewLabel("hot")
+	HotLabel = labelDB["hot"]
 	// HotDeckLabel https://project-haystack.org/tag/hotDeck
-	HotDeckLabel = gohaystack.NewLabel("hotDeck")
+	HotDeckLabel = labelDB["hotDeck"]
 	// HotWaterHeatLabel https://project-haystack.org/tag/hotWaterHeat
-	HotWaterHeatLabel = gohaystack.NewLabel("hotWaterHeat")
+	HotWaterHeatLabel = labelDB["hotWaterHeat"]
 	// HotWaterPlantLabel https://project-haystack.org/tag/hotWaterPlant
-	HotWaterPlantLabel = gohaystack.NewLabel("hotWaterPlant")
+	HotWaterPlantLabel = labelDB["hotWaterPlant"]
 	// HotWaterPlantRefLabel https://project-haystack.org/tag/hotWaterPlantRef
-	HotWaterPlantRefLabel = gohaystack.NewLabel("hotWaterPlantRef")
+	HotWaterPlantRefLabel = labelDB["hotWaterPlantRef"]
 	// HotWaterReheatLabel https://project-haystack.org/tag/hotWaterReheat
-	HotWaterReheatLabel = gohaystack.NewLabel("hotWaterReheat")
+	HotWaterReheatLabel = labelDB["hotWaterReheat"]
 	// HumidifierLabel https://project-haystack.org/tag/humidifier
-	HumidifierLabel = gohaystack.NewLabel("humidifier")
+	HumidifierLabel = labelDB["humidifier"]
 	// HumidityLabel https://project-haystack.org/tag/humidity
-	HumidityLabel = gohaystack.NewLabel("humidity")
+	HumidityLabel = labelDB["humidity"]
 	// HvacLabel https://project-haystack.org/tag/hvac
-	HvacLabel = gohaystack.NewLabel("hvac")
+	HvacLabel = labelDB["hvac"]
 	// IDLabel https://project-haystack.org/tag/iD
-	IDLabel = gohaystack.NewLabel("id")
+	IDLabel = labelDB["id"]
 	// ImbalanceLabel https://project-haystack.org/tag/imbalance
-	ImbalanceLabel = gohaystack.NewLabel("imbalance")
+	ImbalanceLabel = labelDB["imbalance"]
 	// ImportLabel https://project-haystack.org/tag/import
-	ImportLabel = gohaystack.NewLabel("import")
+	ImportLabel = labelDB["import"]
 	// IrradianceLabel https://project-haystack.org/tag/irradiance
-	IrradianceLabel = gohaystack.NewLabel("irradiance")
+	IrradianceLabel = labelDB["irradiance"]
 	// IsolationLabel https://project-haystack.org/tag/isolation
-	IsolationLabel = gohaystack.NewLabel("isolation")
+	IsolationLabel = labelDB["isolation"]
 	// KindLabel https://project-haystack.org/tag/kind
-	KindLabel = gohaystack.NewLabel("kind")
+	KindLabel = labelDB["kind"]
 	// LeavingLabel https://project-haystack.org/tag/leaving
-	LeavingLabel = gohaystack.NewLabel("leaving")
+	LeavingLabel = labelDB["leaving"]
 	// LevelLabel https://project-haystack.org/tag/level
-	LevelLabel = gohaystack.NewLabel("level")
+	LevelLabel = labelDB["level"]
 	// LightLevelLabel https://project-haystack.org/tag/lightLevel
-	LightLevelLabel = gohaystack.NewLabel("lightLevel")
+	LightLevelLabel = labelDB["lightLevel"]
 	// LightingLabel https://project-haystack.org/tag/lighting
-	LightingLabel = gohaystack.NewLabel("lighting")
+	LightingLabel = labelDB["lighting"]
 	// LightsLabel https://project-haystack.org/tag/lights
-	LightsLabel = gohaystack.NewLabel("lights")
+	LightsLabel = labelDB["lights"]
 	// LightsGroupLabel https://project-haystack.org/tag/lightsGroup
-	LightsGroupLabel = gohaystack.NewLabel("lightsGroup")
+	LightsGroupLabel = labelDB["lightsGroup"]
 	// LoadLabel https://project-haystack.org/tag/load
-	LoadLabel = gohaystack.NewLabel("load")
+	LoadLabel = labelDB["load"]
 	// MagLabel https://project-haystack.org/tag/mag
-	MagLabel = gohaystack.NewLabel("mag")
+	MagLabel = labelDB["mag"]
 	// MakeupLabel https://project-haystack.org/tag/makeup
-	MakeupLabel = gohaystack.NewLabel("makeup")
+	MakeupLabel = labelDB["makeup"]
 	// MauLabel https://project-haystack.org/tag/mau
-	MauLabel = gohaystack.NewLabel("mau")
+	MauLabel = labelDB["mau"]
 	// MaxLabel https://project-haystack.org/tag/max
-	MaxLabel = gohaystack.NewLabel("max")
+	MaxLabel = labelDB["max"]
 	// MaxValLabel https://project-haystack.org/tag/maxVal
-	MaxValLabel = gohaystack.NewLabel("maxVal")
+	MaxValLabel = labelDB["maxVal"]
 	// MeterLabel https://project-haystack.org/tag/meter
-	MeterLabel = gohaystack.NewLabel("meter")
+	MeterLabel = labelDB["meter"]
 	// MinLabel https://project-haystack.org/tag/min
-	MinLabel = gohaystack.NewLabel("min")
+	MinLabel = labelDB["min"]
 	// MinValLabel https://project-haystack.org/tag/minVal
-	MinValLabel = gohaystack.NewLabel("minVal")
+	MinValLabel = labelDB["minVal"]
 	// MixedLabel https://project-haystack.org/tag/mixed
-	MixedLabel = gohaystack.NewLabel("mixed")
+	MixedLabel = labelDB["mixed"]
 	// MixingLabel https://project-haystack.org/tag/mixing
-	MixingLabel = gohaystack.NewLabel("mixing")
+	MixingLabel = labelDB["mixing"]
 	// MultiZoneLabel https://project-haystack.org/tag/multiZone
-	MultiZoneLabel = gohaystack.NewLabel("multiZone")
+	MultiZoneLabel = labelDB["multiZone"]
 	// NetLabel https://project-haystack.org/tag/net
-	NetLabel = gohaystack.NewLabel("net")
+	NetLabel = labelDB["net"]
 	// NetworkLabel https://project-haystack.org/tag/network
-	NetworkLabel = gohaystack.NewLabel("network")
+	NetworkLabel = labelDB["network"]
 	// NetworkRefLabel https://project-haystack.org/tag/networkRef
-	NetworkRefLabel = gohaystack.NewLabel("networkRef")
+	NetworkRefLabel = labelDB["networkRef"]
 	// NeutralDeckLabel https://project-haystack.org/tag/neutralDeck
-	NeutralDeckLabel = gohaystack.NewLabel("neutralDeck")
+	NeutralDeckLabel = labelDB["neutralDeck"]
 	// OccLabel https://project-haystack.org/tag/occ
-	OccLabel = gohaystack.NewLabel("occ")
+	OccLabel = labelDB["occ"]
 	// OccupancyIndicatorLabel https://project-haystack.org/tag/occupancyIndicator
-	OccupancyIndicatorLabel = gohaystack.NewLabel("occupancyIndicator")
+	OccupancyIndicatorLabel = labelDB["occupancyIndicator"]
 	// OccupiedLabel https://project-haystack.org/tag/occupied
-	OccupiedLabel = gohaystack.NewLabel("occupied")
+	OccupiedLabel = labelDB["occupied"]
 	// OilLabel https://project-haystack.org/tag/oil
-	OilLabel = gohaystack.NewLabel("oil")
+	OilLabel = labelDB["oil"]
 	// OpenLoopLabel https://project-haystack.org/tag/openLoop
-	OpenLoopLabel = gohaystack.NewLabel("openLoop")
+	OpenLoopLabel = labelDB["openLoop"]
 	// OutsideLabel https://project-haystack.org/tag/outside
-	OutsideLabel = gohaystack.NewLabel("outside")
+	OutsideLabel = labelDB["outside"]
 	// ParallelLabel https://project-haystack.org/tag/parallel
-	ParallelLabel = gohaystack.NewLabel("parallel")
+	ParallelLabel = labelDB["parallel"]
 	// PerimeterHeatLabel https://project-haystack.org/tag/perimeterHeat
-	PerimeterHeatLabel = gohaystack.NewLabel("perimeterHeat")
+	PerimeterHeatLabel = labelDB["perimeterHeat"]
 	// PfLabel https://project-haystack.org/tag/pf
-	PfLabel = gohaystack.NewLabel("pf")
+	PfLabel = labelDB["pf"]
 	// PhaseLabel https://project-haystack.org/tag/phase
-	PhaseLabel = gohaystack.NewLabel("phase")
+	PhaseLabel = labelDB["phase"]
 	// PointLabel https://project-haystack.org/tag/point
-	PointLabel = gohaystack.NewLabel("point")
+	PointLabel = labelDB["point"]
 	// PowerLabel https://project-haystack.org/tag/power
-	PowerLabel = gohaystack.NewLabel("power")
+	PowerLabel = labelDB["power"]
 	// PrecipitationLabel https://project-haystack.org/tag/precipitation
-	PrecipitationLabel = gohaystack.NewLabel("precipitation")
+	PrecipitationLabel = labelDB["precipitation"]
 	// PressureLabel https://project-haystack.org/tag/pressure
-	PressureLabel = gohaystack.NewLabel("pressure")
+	PressureLabel = labelDB["pressure"]
 	// PressureDependentLabel https://project-haystack.org/tag/pressureDependent
-	PressureDependentLabel = gohaystack.NewLabel("pressureDependent")
+	PressureDependentLabel = labelDB["pressureDependent"]
 	// PressureIndependentLabel https://project-haystack.org/tag/pressureIndependent
-	PressureIndependentLabel = gohaystack.NewLabel("pressureIndependent")
+	PressureIndependentLabel = labelDB["pressureIndependent"]
 	// PrimaryFunctionLabel https://project-haystack.org/tag/primaryFunction
-	PrimaryFunctionLabel = gohaystack.NewLabel("primaryFunction")
+	PrimaryFunctionLabel = labelDB["primaryFunction"]
 	// PrimaryLoopLabel https://project-haystack.org/tag/primaryLoop
-	PrimaryLoopLabel = gohaystack.NewLabel("primaryLoop")
+	PrimaryLoopLabel = labelDB["primaryLoop"]
 	// ProtocolLabel https://project-haystack.org/tag/protocol
-	ProtocolLabel = gohaystack.NewLabel("protocol")
+	ProtocolLabel = labelDB["protocol"]
 	// PumpLabel https://project-haystack.org/tag/pump
-	PumpLabel = gohaystack.NewLabel("pump")
+	PumpLabel = labelDB["pump"]
 	// ReactiveLabel https://project-haystack.org/tag/reactive
-	ReactiveLabel = gohaystack.NewLabel("reactive")
+	ReactiveLabel = labelDB["reactive"]
 	// ReciprocalLabel https://project-haystack.org/tag/reciprocal
-	ReciprocalLabel = gohaystack.NewLabel("reciprocal")
+	ReciprocalLabel = labelDB["reciprocal"]
 	// RefrigLabel https://project-haystack.org/tag/refrig
-	RefrigLabel = gohaystack.NewLabel("refrig")
+	RefrigLabel = labelDB["refrig"]
 	// ReheatLabel https://project-haystack.org/tag/reheat
-	ReheatLabel = gohaystack.NewLabel("reheat")
+	ReheatLabel = labelDB["reheat"]
 	// ReheatingLabel https://project-haystack.org/tag/reheating
-	ReheatingLabel = gohaystack.NewLabel("reheating")
+	ReheatingLabel = labelDB["reheating"]
 	// ReturnLabel https://project-haystack.org/tag/return
-	ReturnLabel = gohaystack.NewLabel("return")
+	ReturnLabel = labelDB["return"]
 	// RooftopLabel https://project-haystack.org/tag/rooftop
-	RooftopLabel = gohaystack.NewLabel("rooftop")
+	RooftopLabel = labelDB["rooftop"]
 	// RunLabel https://project-haystack.org/tag/run
-	RunLabel = gohaystack.NewLabel("run")
+	RunLabel = labelDB["run"]
 	// ScrewLabel https://project-haystack.org/tag/screw
-	ScrewLabel = gohaystack.NewLabel("screw")
+	ScrewLabel = labelDB["screw"]
 	// SecondaryLoopLabel https://project-haystack.org/tag/secondaryLoop
-	SecondaryLoopLabel = gohaystack.NewLabel("secondaryLoop")
+	SecondaryLoopLabel = labelDB["secondaryLoop"]
 	// SensorLabel https://project-haystack.org/tag/sensor
-	SensorLabel = gohaystack.NewLabel("sensor")
+	SensorLabel = labelDB["sensor"]
 	// SeriesLabel https://project-haystack.org/tag/series
-	SeriesLabel = gohaystack.NewLabel("series")
+	SeriesLabel = labelDB["series"]
 	// SingleDuctLabel https://project-haystack.org/tag/singleDuct
-	SingleDuctLabel = gohaystack.NewLabel("singleDuct")
+	SingleDuctLabel = labelDB["singleDuct"]
 	// SiteLabel https://project-haystack.org/tag/site
-	SiteLabel = gohaystack.NewLabel("site")
+	SiteLabel = labelDB["site"]
 	// SiteMeterLabel https://project-haystack.org/tag/siteMeter
-	SiteMeterLabel = gohaystack.NewLabel("siteMeter")
+	SiteMeterLabel = labelDB["siteMeter"]
 	// SitePanelLabel https://project-haystack.org/tag/sitePanel
-	SitePanelLabel = gohaystack.NewLabel("sitePanel")
+	SitePanelLabel = labelDB["sitePanel"]
 	// SiteRefLabel https://project-haystack.org/tag/siteRef
-	SiteRefLabel = gohaystack.NewLabel("siteRef")
+	SiteRefLabel = labelDB["siteRef"]
 	// SolarLabel https://project-haystack.org/tag/solar
-	SolarLabel = gohaystack.NewLabel("solar")
+	SolarLabel = labelDB["solar"]
 	// SpLabel https://project-haystack.org/tag/sp
-	SpLabel = gohaystack.NewLabel("sp")
+	SpLabel = labelDB["sp"]
 	// SpeedLabel https://project-haystack.org/tag/speed
-	SpeedLabel = gohaystack.NewLabel("speed")
+	SpeedLabel = labelDB["speed"]
 	// StageLabel https://project-haystack.org/tag/stage
-	StageLabel = gohaystack.NewLabel("stage")
+	StageLabel = labelDB["stage"]
 	// StandbyLabel https://project-haystack.org/tag/standby
-	StandbyLabel = gohaystack.NewLabel("standby")
+	StandbyLabel = labelDB["standby"]
 	// SteamLabel https://project-haystack.org/tag/steam
-	SteamLabel = gohaystack.NewLabel("steam")
+	SteamLabel = labelDB["steam"]
 	// SteamHeatLabel https://project-haystack.org/tag/steamHeat
-	SteamHeatLabel = gohaystack.NewLabel("steamHeat")
+	SteamHeatLabel = labelDB["steamHeat"]
 	// SteamMeterLoadLabel https://project-haystack.org/tag/steamMeterLoad
-	SteamMeterLoadLabel = gohaystack.NewLabel("steamMeterLoad")
+	SteamMeterLoadLabel = labelDB["steamMeterLoad"]
 	// SteamPlantLabel https://project-haystack.org/tag/steamPlant
-	SteamPlantLabel = gohaystack.NewLabel("steamPlant")
+	SteamPlantLabel = labelDB["steamPlant"]
 	// SteamPlantRefLabel https://project-haystack.org/tag/steamPlantRef
-	SteamPlantRefLabel = gohaystack.NewLabel("steamPlantRef")
+	SteamPlantRefLabel = labelDB["steamPlantRef"]
 	// SubPanelOfLabel https://project-haystack.org/tag/subPanelOf
-	SubPanelOfLabel = gohaystack.NewLabel("subPanelOf")
+	SubPanelOfLabel = labelDB["subPanelOf"]
 	// SubmeterOfLabel https://project-haystack.org/tag/submeterOf
-	SubmeterOfLabel = gohaystack.NewLabel("submeterOf")
+	SubmeterOfLabel = labelDB["submeterOf"]
 	// SunriseLabel https://project-haystack.org/tag/sunrise
-	SunriseLabel = gohaystack.NewLabel("sunrise")
+	SunriseLabel = labelDB["sunrise"]
 	// TankLabel https://project-haystack.org/tag/tank
-	TankLabel = gohaystack.NewLabel("tank")
+	TankLabel = labelDB["tank"]
 	// TempLabel https://project-haystack.org/tag/temp
-	TempLabel = gohaystack.NewLabel("temp")
+	TempLabel = labelDB["temp"]
 	// ThdLabel https://project-haystack.org/tag/thd
-	ThdLabel = gohaystack.NewLabel("thd")
+	ThdLabel = labelDB["thd"]
 	// TotalLabel https://project-haystack.org/tag/total
-	TotalLabel = gohaystack.NewLabel("total")
+	TotalLabel = labelDB["total"]
 	// TripleDuctLabel https://project-haystack.org/tag/tripleDuct
-	TripleDuctLabel = gohaystack.NewLabel("tripleDuct")
+	TripleDuctLabel = labelDB["tripleDuct"]
 	// TzLabel https://project-haystack.org/tag/tz
-	TzLabel = gohaystack.NewLabel("tz")
+	TzLabel = labelDB["tz"]
 	// UnitLabel https://project-haystack.org/tag/unit
-	UnitLabel = gohaystack.NewLabel("unit")
+	UnitLabel = labelDB["unit"]
 	// UnoccLabel https://project-haystack.org/tag/unocc
-	UnoccLabel = gohaystack.NewLabel("unocc")
+	UnoccLabel = labelDB["unocc"]
 	// UvLabel https://project-haystack.org/tag/uv
-	UvLabel = gohaystack.NewLabel("uv")
+	UvLabel = labelDB["uv"]
 	// ValveLabel https://project-haystack.org/tag/valve
-	ValveLabel = gohaystack.NewLabel("valve")
+	ValveLabel = labelDB["valve"]
 	// VariableVolumeLabel https://project-haystack.org/tag/variableVolume
-	VariableVolumeLabel = gohaystack.NewLabel("variableVolume")
+	VariableVolumeLabel = labelDB["variableVolume"]
 	// VavLabel https://project-haystack.org/tag/vav
-	VavLabel = gohaystack.NewLabel("vav")
+	VavLabel = labelDB["vav"]
 	// VavModeLabel https://project-haystack.org/tag/vavMode
-	VavModeLabel = gohaystack.NewLabel("vavMode")
+	VavModeLabel = labelDB["vavMode"]
 	// VavZoneLabel https://project-haystack.org/tag/vavZone
-	VavZoneLabel = gohaystack.NewLabel("vavZone")
+	VavZoneLabel = labelDB["vavZone"]
 	// VfdLabel https://project-haystack.org/tag/vfd
-	VfdLabel = gohaystack.NewLabel("vfd")
+	VfdLabel = labelDB["vfd"]
 	// VisibilityLabel https://project-haystack.org/tag/visibility
-	VisibilityLabel = gohaystack.NewLabel("visibility")
+	VisibilityLabel = labelDB["visibility"]
 	// VoltLabel https://project-haystack.org/tag/volt
-	VoltLabel = gohaystack.NewLabel("volt")
+	VoltLabel = labelDB["volt"]
 	// VolumeLabel https://project-haystack.org/tag/volume
-	VolumeLabel = gohaystack.NewLabel("volume")
+	VolumeLabel = labelDB["volume"]
 	// WaterLabel https://project-haystack.org/tag/water
-	WaterLabel = gohaystack.NewLabel("water")
+	WaterLabel = labelDB["water"]
 	// WaterCooledLabel https://project-haystack.org/tag/waterCooled
-	WaterCooledLabel = gohaystack.NewLabel("waterCooled")
+	WaterCooledLabel = labelDB["waterCooled"]
 	// WaterMeterLoadLabel https://project-haystack.org/tag/waterMeterLoad
-	WaterMeterLoadLabel = gohaystack.NewLabel("waterMeterLoad")
+	WaterMeterLoadLabel = labelDB["waterMeterLoad"]
 	// WeatherLabel https://project-haystack.org/tag/weather
-	WeatherLabel = gohaystack.NewLabel("weather")
+	WeatherLabel = labelDB["weather"]
 	// WeatherCondLabel https://project-haystack.org/tag/weatherCond
-	WeatherCondLabel = gohaystack.NewLabel("weatherCond")
+	WeatherCondLabel = labelDB["weatherCond"]
 	// WeatherPointLabel https://project-haystack.org/tag/weatherPoint
-	WeatherPointLabel = gohaystack.NewLabel("weatherPoint")
+	WeatherPointLabel = labelDB["weatherPoint"]
 	// WeatherRefLabel https://project-haystack.org/tag/weatherRef
-	WeatherRefLabel = gohaystack.NewLabel("weatherRef")
+	WeatherRefLabel = labelDB["weatherRef"]
 	// WetBulbLabel https://project-haystack.org/tag/wetBulb
-	WetBulbLabel = gohaystack.NewLabel("wetBulb")
+	WetBulbLabel = labelDB["wetBulb"]
 	// WindLabel https://project-haystack.org/tag/wind
-	WindLabel = gohaystack.NewLabel("wind")
+	WindLabel = labelDB["wind"]
 	// WritableLabel https://project-haystack.org/tag/writable
-	WritableLabel = gohaystack.NewLabel("writable")
+	WritableLabel = labelDB["writable"]
 	// WriteErrLabel https://project-haystack.org/tag/writeErr
-	WriteErrLabel = gohaystack.NewLabel("writeErr")
+	WriteErrLabel = labelDB["writeErr"]
 	// WriteLevelLabel https://project-haystack.org/tag/writeLevel
-	WriteLevelLabel = gohaystack.NewLabel("writeLevel")
+	WriteLevelLabel = labelDB["writeLevel"]
 	// WriteStatusLabel https://project-haystack.org/tag/writeStatus
-	WriteStatusLabel = gohaystack.NewLabel("writeStatus")
+	WriteStatusLabel = labelDB["writeStatus"]
 	// WriteValLabel https://project-haystack.org/tag/writeVal
-	WriteValLabel = gohaystack.NewLabel("writeVal")
+	WriteValLabel = labelDB["writeVal"]
 	// YearBuiltLabel https://project-haystack.org/tag/yearBuilt
-	YearBuiltLabel = gohaystack.NewLabel("yearBuilt")
+	YearBuiltLabel = labelDB["yearBuilt"]
 	// ZoneLabel https://project-haystack.org/tag/zone
-	ZoneLabel = gohaystack.NewLabel("zone")
+	ZoneLabel = labelDB["zone"]
 )
 
 var (
