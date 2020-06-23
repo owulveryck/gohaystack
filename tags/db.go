@@ -242,3 +242,9 @@ func GetLabelByName(name string) (*gohaystack.Label, bool) {
 	l, ok := labelDB[name]
 	return l, ok
 }
+
+// GetMarkerByName  returns a  func that  returns a
+func GetMarkerByName(name string) (func() (*gohaystack.Label, *gohaystack.Value), bool) {
+	m, ok := markerDB[name]
+	return m, ok
+}
