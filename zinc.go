@@ -16,13 +16,21 @@ func (g *Grid) MarshalZinc() ([]byte, error) {
 	// Writing columns
 	labels := g.marshalColsZinc(&b)
 	// Values
+	err = g.marshalRowsZinc(&b, labels)
+	if err != nil {
+		return nil, err
+	}
+	return []byte(b.String()), nil
+}
+
+func (g *Grid) marshalRowsZinc(b *strings.Builder, labels []*Label) error {
 	i := 0
 	for _, entity := range g.entities {
 		for _, l := range labels {
 			if v, ok := entity.GetTags()[l]; ok {
 				z, err := v.MarshalZinc()
 				if err != nil {
-					return nil, err
+					return err
 				}
 				b.Write(z)
 			}
@@ -34,8 +42,7 @@ func (g *Grid) MarshalZinc() ([]byte, error) {
 		}
 		b.WriteString(`\n`)
 	}
-
-	return []byte(b.String()), nil
+	return nil
 }
 
 // MarshalZinc for a value
