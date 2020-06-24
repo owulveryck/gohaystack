@@ -1,9 +1,15 @@
 package gohaystack
 
 import (
+	"net/url"
 	"reflect"
 	"testing"
+	"time"
 )
+
+func newString(s string) *string {
+	return &s
+}
 
 func TestGrid_MarshalZinc(t *testing.T) {
 	//	blabla := "blabla"
@@ -188,6 +194,116 @@ func TestGrid_MarshalZinc(t *testing.T) {
 			}
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Grid.MarshalZinc() = %v, want %v", string(got), string(tt.want))
+			}
+		})
+	}
+}
+
+func TestValue_MarshalZinc(t *testing.T) {
+	type fields struct {
+		kind   Kind
+		str    *string
+		number struct {
+			value float32
+			unit  Unit
+		}
+		b     bool
+		t     time.Time
+		u     *url.URL
+		ref   *HaystackID
+		g     *Grid
+		dict  map[string]*Value
+		list  []*Value
+		coord struct {
+			long float32
+			lat  float32
+		}
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		want    []byte
+		wantErr bool
+	}{
+		{
+			"nil",
+			fields{
+				kind: HaystackLastType,
+			},
+			nil,
+			false,
+		},
+		{
+			"Undefined",
+			fields{
+				kind: HaystackTypeUndefined,
+			},
+			nil,
+			true,
+		},
+		{
+			"string",
+			fields{
+				kind: HaystackTypeStr,
+				str:  newString("bla"),
+			},
+			[]byte(`"bla"`),
+			false,
+		},
+		{
+			"bad grid",
+			fields{
+				kind: HaystackTypeGrid,
+				g:    &Grid{},
+			},
+			nil,
+			true,
+		},
+		{
+			"good grid",
+			fields{
+				kind: HaystackTypeGrid,
+				g: &Grid{
+					Meta: map[string]string{
+						"ver": "3.0",
+					},
+				},
+			},
+			[]byte(`<<\nver:"3.0"\n\n>>\n`),
+			false,
+		},
+		{
+			"default",
+			fields{
+				kind: Kind(HaystackLastType + 1),
+			},
+			nil,
+			false,
+		},
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			v := &Value{
+				kind:   tt.fields.kind,
+				str:    tt.fields.str,
+				number: tt.fields.number,
+				b:      tt.fields.b,
+				t:      tt.fields.t,
+				u:      tt.fields.u,
+				ref:    tt.fields.ref,
+				g:      tt.fields.g,
+				dict:   tt.fields.dict,
+				list:   tt.fields.list,
+				coord:  tt.fields.coord,
+			}
+			got, err := v.MarshalZinc()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Value.MarshalZinc() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Value.MarshalZinc() = %v, want %v", string(got), string(tt.want))
 			}
 		})
 	}

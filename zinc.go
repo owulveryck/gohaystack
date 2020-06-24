@@ -50,6 +50,35 @@ func (v *Value) MarshalZinc() ([]byte, error) {
 	if v == nil {
 		return nil, errors.New("cannot marshal this type")
 	}
+	switch v.kind {
+	case HaystackLastType:
+		return nil, nil
+	case HaystackTypeUndefined:
+		return nil, errors.New("cannot marshal this type")
+	case HaystackTypeGrid:
+		b, err := v.g.MarshalZinc()
+		if err != nil {
+			return nil, err
+		}
+		return []byte(`<<\n` + string(b) + `\n>>\n`), nil
+	case HaystackTypeList:
+	case HaystackTypeDict:
+	case HaystackTypeNull:
+	case HaystackTypeBool:
+	case HaystackTypeMarker:
+	case HaystackTypeRemove:
+	case HaystackTypeNA:
+	case HaystackTypeNumber:
+	case HaystackTypeRef:
+	case HaystackTypeStr:
+		return []byte(`"` + *v.str + `"`), nil
+	case HaystackTypeDate:
+	case HaystackTypeTime:
+	case HaystackTypeDateTime:
+	case HaystackTypeURI:
+	case HaystackTypeCoord:
+	case HaystackTypeXStr:
+	}
 	return nil, nil
 }
 
