@@ -145,7 +145,7 @@ func TestGrid_MarshalZinc(t *testing.T) {
 					},
 				},
 			},
-			[]byte(`ver:"3.0" database:"test"\na,a\n\n`), // This should not be valid, but in the grid the two labels are differents
+			[]byte(`ver:"3.0" database:"test"\na,a\n,\n`), // This should not be valid, but in the grid the two labels are differents
 			false,
 		},
 		{

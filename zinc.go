@@ -27,7 +27,7 @@ func (g *Grid) MarshalZinc() ([]byte, error) {
 				b.Write(z)
 			}
 
-			if i < len(labels)-1 && i != 0 {
+			if i < len(labels)-1 {
 				b.WriteString(`,`)
 			}
 			i++
