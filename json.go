@@ -142,6 +142,6 @@ type haystackJSONCol struct {
 }
 type haystackJSONStructure struct {
 	Meta map[string]string   `json:"meta"`
-	Cols []haystackJSONCol   `json:"cols"`
-	Rows []map[string]*Value `json:"rows"`
+	Cols []haystackJSONCol   `json:"cols,omitempty"`
+	Rows []map[string]*Value `json:"rows,omitempty"`
 }

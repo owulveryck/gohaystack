@@ -202,7 +202,7 @@ func TestValue_MarshalJSON(t *testing.T) {
 				kind: HaystackTypeGrid,
 				g:    NewGrid(),
 			},
-			[]byte(`{"meta":{"Ver":"3.0"},"cols":[],"rows":[]}`),
+			[]byte(`{"meta":{"Ver":"3.0"}}`),
 			false,
 		},
 		{
