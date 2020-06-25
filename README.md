@@ -33,22 +33,22 @@ Please, see the API documentation for more information.
 
 | Haystack kind | JSON Serialize | JSON Deserialize | Zinc Serialize | Zinc Deserialize |
 |---------------|----------------|------------------|----------------|------------------|
-| Grid          | x              | x                |                |                  |
-| List          | x              | x                |                |                  |
-| Dict          | x              | x                |                |                  |
-| Null          | x              | x                |                |                  |
-| Bool          | x              | x                |                |                  |
-| Marker        | x              | x                |                |                  |
-| Remove        | x              | x                |                |                  |
-| NA            | x              | x                |                |                  |
-| Number        | x              | x                |                |                  |
-| Ref           | x              | x                |                |                  |
-| Str           | x              | x                |                |                  |
-| Date          | x              | x                |                |                  |
-| Time          | x              | x                |                |                  |
-| DateTime      | x              | x                |                |                  |
-| URI           | x              | x                |                |                  |
-| Coord         | x              | x                |                |                  |
+| Grid          | x              | x                | x              |                  |
+| List          | x              | x                | x              |                  |
+| Dict          | x              | x                | x              |                  |
+| Null          | x              | x                | x              |                  |
+| Bool          | x              | x                | x              |                  |
+| Marker        | x              | x                | x              |                  |
+| Remove        | x              | x                | x              |                  |
+| NA            | x              | x                | x              |                  |
+| Number        | x              | x                | x              |                  |
+| Ref           | x              | x                | x              |                  |
+| Str           | x              | x                | x              |                  |
+| Date          | x              | x                | x              |                  |
+| Time          | x              | x                | x              |                  |
+| DateTime      | x              | x                | x              |                  |
+| URI           | x              | x                | x              |                  |
+| Coord         | x              | x                | x              |                  |
 | Xstr          |                |                  |                |                  |
 
 ## Haystack tags package
