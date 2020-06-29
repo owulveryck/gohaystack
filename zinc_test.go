@@ -100,7 +100,7 @@ func TestGrid_MarshalZinc(t *testing.T) {
 					},
 				},
 			},
-			[]byte("ver:\"3.0\" database:\"test\"\nblabla\n\n"),
+			[]byte("ver:\"3.0\" database:\"test\"\nid,blabla\n@myid,\n"),
 			false,
 		},
 		{
@@ -124,7 +124,7 @@ func TestGrid_MarshalZinc(t *testing.T) {
 					},
 				},
 			},
-			[]byte("ver:\"3.0\" database:\"test\"\nblabla dis:\"display\"\n\n"),
+			[]byte("ver:\"3.0\" database:\"test\"\nid,blabla dis:\"display\"\n@myid,\n"),
 			false,
 		},
 		{
@@ -152,7 +152,7 @@ func TestGrid_MarshalZinc(t *testing.T) {
 					},
 				},
 			},
-			[]byte("ver:\"3.0\" database:\"test\"\na,a\n,\n"), // This should not be valid, but in the grid the two labels are differents
+			[]byte("ver:\"3.0\" database:\"test\"\nid,a,a\n@myid,,\n"), // This should not be valid, but in the grid the two labels are differents
 			false,
 		},
 		{

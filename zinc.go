@@ -27,8 +27,13 @@ func (g *Grid) MarshalZinc() ([]byte, error) {
 }
 
 func (g *Grid) marshalRowsZinc(b *strings.Builder, labels []*Label) error {
-	i := 0
+
 	for _, entity := range g.entities {
+		i := 0
+		b.WriteString("@" + string(*entity.id))
+		if len(labels) > 0 {
+			b.WriteString(",")
+		}
 		for _, l := range labels {
 			if v, ok := entity.GetTags()[l]; ok {
 				if v == nil {
@@ -40,9 +45,8 @@ func (g *Grid) marshalRowsZinc(b *strings.Builder, labels []*Label) error {
 				}
 				b.Write(z)
 			}
-
 			if i < len(labels)-1 {
-				b.WriteString(`,`)
+				b.WriteString(",")
 			}
 			i++
 		}
@@ -180,6 +184,10 @@ func (g *Grid) marshalColsZinc(b *strings.Builder) []*Label {
 		}
 	}
 	labels := make([]*Label, 0, len(labelsDic))
+	if len(labelsDic) > 0 {
+		b.WriteString("id")
+		b.WriteString(`,`)
+	}
 	i := 0
 	for l := range labelsDic {
 		b.WriteString(l.Value)
