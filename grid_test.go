@@ -14,7 +14,7 @@ func TestNewGrid(t *testing.T) {
 			"simple grid",
 			&Grid{
 				Meta: map[string]string{
-					"Ver": "3.0",
+					"ver": "3.0",
 				},
 				entities: make([]*Entity, 0),
 			},
@@ -49,7 +49,7 @@ func TestGrid_NewEntity(t *testing.T) {
 			"new Entity with empty ID",
 			fields{
 				Meta: map[string]string{
-					"Ver": "3,0",
+					"ver": "3,0",
 				},
 				labels:   make([]*Label, 0),
 				entities: make([]*Entity, 0),

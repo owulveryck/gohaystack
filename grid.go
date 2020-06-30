@@ -10,7 +10,7 @@ type Grid struct {
 func NewGrid() *Grid {
 	return &Grid{
 		Meta: map[string]string{
-			"Ver": "3.0",
+			"ver": "3.0",
 		},
 		entities: make([]*Entity, 0),
 	}
