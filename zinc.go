@@ -1,38 +1,38 @@
 package gohaystack
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
+	"io"
 	"math"
 	"strconv"
-	"strings"
 )
 
 // MarshalZinc encode the grrind in zinc format.
 // https://www.project-haystack.org/doc/Zinc
-func (g *Grid) MarshalZinc() ([]byte, error) {
-	var b strings.Builder
-	err := g.marshalMetaZinc(&b)
+func (g *Grid) MarshalZinc(w io.Writer) error {
+	err := g.marshalMetaZinc(w)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	// Writing columns
-	labels := g.marshalColsZinc(&b)
+	labels := g.marshalColsZinc(w)
 	// Values
-	err = g.marshalRowsZinc(&b, labels)
+	err = g.marshalRowsZinc(w, labels)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return []byte(b.String()), nil
+	return nil
 }
 
-func (g *Grid) marshalRowsZinc(b *strings.Builder, labels []*Label) error {
+func (g *Grid) marshalRowsZinc(w io.Writer, labels []*Label) error {
 
 	for _, entity := range g.entities {
 		i := 0
-		b.WriteString("@" + string(*entity.id))
+		w.Write([]byte("@" + string(*entity.id)))
 		if len(labels) > 0 {
-			b.WriteString(",")
+			w.Write([]byte(","))
 		}
 		for _, l := range labels {
 			if v, ok := entity.GetTags()[l]; ok {
@@ -43,14 +43,14 @@ func (g *Grid) marshalRowsZinc(b *strings.Builder, labels []*Label) error {
 				if err != nil {
 					return err
 				}
-				b.Write(z)
+				w.Write(z)
 			}
 			if i < len(labels)-1 {
-				b.WriteString(",")
+				w.Write([]byte(","))
 			}
 			i++
 		}
-		b.WriteString("\n")
+		w.Write([]byte("\n"))
 	}
 	return nil
 }
@@ -63,11 +63,12 @@ func (v *Value) MarshalZinc() ([]byte, error) {
 	case HaystackTypeUndefined:
 		return nil, errors.New("cannot marshal this type")
 	case HaystackTypeGrid:
-		b, err := v.g.MarshalZinc()
+		var b bytes.Buffer
+		err := v.g.MarshalZinc(&b)
 		if err != nil {
 			return nil, err
 		}
-		return []byte("<<\n" + string(b) + "\n>>\n"), nil
+		return []byte("<<\n" + b.String() + "\n>>\n"), nil
 	case HaystackTypeNull:
 		return []byte(`N`), nil
 	case HaystackTypeBool:
@@ -146,7 +147,7 @@ func (v *Value) MarshalZinc() ([]byte, error) {
 	return nil, nil
 }
 
-func (g *Grid) marshalMetaZinc(b *strings.Builder) error {
+func (g *Grid) marshalMetaZinc(w io.Writer) error {
 	var hasVer bool
 	var version string
 	if v, ok := g.Meta["Ver"]; ok {
@@ -164,19 +165,19 @@ func (g *Grid) marshalMetaZinc(b *strings.Builder) error {
 		return errors.New("Unsupported version " + version)
 	}
 	// Writing header
-	b.WriteString(`ver:"3.0"`)
+	w.Write([]byte(`ver:"3.0"`))
 	for t, v := range g.Meta {
 		if t == "ver" || t == "Ver" {
 			continue
 		}
-		b.WriteString(` ` + t + `:`)
-		b.WriteString(`"` + v + `"`)
+		w.Write([]byte(` ` + t + `:`))
+		w.Write([]byte(`"` + v + `"`))
 	}
-	b.WriteString("\n")
+	w.Write([]byte("\n"))
 	return nil
 }
 
-func (g *Grid) marshalColsZinc(b *strings.Builder) []*Label {
+func (g *Grid) marshalColsZinc(w io.Writer) []*Label {
 	labelsDic := make(map[*Label]struct{}, 0)
 	for _, entity := range g.entities {
 		for label := range entity.tags {
@@ -185,23 +186,23 @@ func (g *Grid) marshalColsZinc(b *strings.Builder) []*Label {
 	}
 	labels := make([]*Label, 0, len(labelsDic))
 	if len(labelsDic) > 0 {
-		b.WriteString("id")
-		b.WriteString(`,`)
+		w.Write([]byte("id"))
+		w.Write([]byte(`,`))
 	}
 	i := 0
 	for l := range labelsDic {
-		b.WriteString(l.Value)
+		w.Write([]byte(l.Value))
 		if l.Display != "" {
-			b.WriteString(` dis:"` + l.Display + `"`)
+			w.Write([]byte(` dis:"` + l.Display + `"`))
 		}
 		labels = append(labels, l)
 		if i < len(labelsDic)-1 {
-			b.WriteString(`,`)
+			w.Write([]byte(`,`))
 		}
 		i++
 	}
 	if len(labels) > 0 {
-		b.WriteString("\n")
+		w.Write([]byte("\n"))
 	}
 	return labels
 }

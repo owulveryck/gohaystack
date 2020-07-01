@@ -1,6 +1,7 @@
 package gohaystack
 
 import (
+	"bytes"
 	"math"
 	"net/url"
 	"reflect"
@@ -178,7 +179,7 @@ func TestGrid_MarshalZinc(t *testing.T) {
 					},
 				},
 			},
-			nil,
+			[]byte("ver:\"3.0\" database:\"test\"\nid,a,a\n@myid,"), // This should not be valid, but in the grid the two labels are differents
 			true,
 		},
 		{
@@ -206,7 +207,7 @@ func TestGrid_MarshalZinc(t *testing.T) {
 					},
 				},
 			},
-			nil,
+			[]byte("ver:\"3.0\" database:\"test\"\nid,a,a\n@myid,,"), // This should not be valid, but in the grid the two labels are differents
 			true,
 		},
 	}
@@ -216,13 +217,14 @@ func TestGrid_MarshalZinc(t *testing.T) {
 				Meta:     tt.fields.Meta,
 				entities: tt.fields.entities,
 			}
-			got, err := g.MarshalZinc()
+			var got bytes.Buffer
+			err := g.MarshalZinc(&got)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Grid.MarshalZinc() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Grid.MarshalZinc() = %v, want %v", string(got), string(tt.want))
+			if !reflect.DeepEqual(got.Bytes(), []byte(tt.want)) {
+				t.Errorf("Grid.MarshalZinc() = %v, want %v", got.Bytes(), tt.want)
 			}
 		})
 	}

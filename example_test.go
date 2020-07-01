@@ -1,8 +1,8 @@
 package gohaystack
 
 import (
-	"fmt"
 	"log"
+	"os"
 )
 
 func ExampleGrid() {
@@ -28,9 +28,8 @@ func ExampleMarshalZinc() {
 	myTagValue := NewStr("foo")
 	entity.SetTag(myTagLabel, myTagValue)
 	entity.SetTag(myTagSite, MarkerValue)
-	b, err := g.MarshalZinc()
+	err := g.MarshalZinc(os.Stdout)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(string(b))
 }
