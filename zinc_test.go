@@ -170,16 +170,11 @@ func TestGrid_MarshalZinc(t *testing.T) {
 							{
 								Value: "a",
 							}: nil,
-							{
-								Value: "a",
-							}: {
-								kind: HaystackLastType,
-							},
 						},
 					},
 				},
 			},
-			[]byte("ver:\"3.0\" database:\"test\"\nid,a,a\n@myid,"), // This should not be valid, but in the grid the two labels are differents
+			[]byte("ver:\"3.0\" database:\"test\"\nid,a\n@myid,"), // This should not be valid, but in the grid the two labels are differents
 			true,
 		},
 		{
@@ -196,18 +191,13 @@ func TestGrid_MarshalZinc(t *testing.T) {
 							{
 								Value: "a",
 							}: {
-								kind: HaystackLastType,
-							},
-							{
-								Value: "a",
-							}: {
 								kind: HaystackTypeUndefined,
 							},
 						},
 					},
 				},
 			},
-			[]byte("ver:\"3.0\" database:\"test\"\nid,a,a\n@myid,,"), // This should not be valid, but in the grid the two labels are differents
+			[]byte("ver:\"3.0\" database:\"test\"\nid,a\n@myid,"), // This should not be valid, but in the grid the two labels are differents
 			true,
 		},
 	}
